@@ -4,7 +4,7 @@
     <link>https://snow-dev.com</link>
     <description>A blog about linux, vim, devops and various other tech topics</description>
     <managingEditor>marcel.patzwahl@posteo.de (Marcel Patzwahl)</managingEditor>
-    <pubDate>Sun, 20 Dec 2020 17:59:16 +0100</pubDate>
+    <pubDate>Sun, 30 May 2021 16:47:25 +0200</pubDate>
     <item>
       <title>Build your own Git Server with a Raspberry Pi</title>
       <link>https://snow-dev.com/posts/build-your-own-git-server-with-a-raspberry-pi.html</link>
@@ -72,6 +72,13 @@
       <description>In the life of every linux enthusiast comes the point, where he has a lot of individual configuration build up and wants to migrate these settings over to another machine as seamlessly as possible. At this point a whole philosophy of how to do this is coming into play. Today this philosophy is bundled under the name: dotfiles. Historically dotfiles are the config files, which lie in your home directory.</description>
       <author>Marcel Patzwahl</author>
       <pubDate>Fri, 11 Oct 2019 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Setup pass on multiple devices</title>
+      <link>https://snow-dev.com/posts/setup-pass-on-multiple-devices.html</link>
+      <description></description>
+      <author>Marcel Patzwahl</author>
+      <pubDate>Sun, 11 Apr 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>The power of Vim Plugins: CtrlP</title>

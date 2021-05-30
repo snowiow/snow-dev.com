@@ -15,6 +15,7 @@
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -125,15 +126,15 @@
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">debconf-set-selections</span> <span class="op">&lt;&lt;&lt;</span> <span class="st">&quot;phpmyadmin phpmyadmin/mysql/app-pass password my_pw&quot;</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">debconf-set-selections</span> <span class="op">&lt;&lt;&lt;</span> <span class="st">&quot;phpmyadmin phpmyadmin/app-password-confirm password my_pw&quot;</span></span></code></pre></div>
 <p>This should look similar to you. We already did it, while installing MySQL. Because PHPMyAdmin is working with an interactive prompt as well, we pass the different parameters in before. Out of simplicity we go with <em>my_pw</em> as our password again. Now we can install it</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install -y phpmyadmin</span>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install <span class="at">-y</span> phpmyadmin</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">php5enmod</span> mcrypt</span></code></pre></div>
 <p>On PHP5 we need to enable the mcrypt library, otherwise we get an annoying red box inside of our PHPMyAdmin Frontend. The last part of our config looks like this.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span><span class="bu"> [</span> <span class="ot">-f</span> /vagrant/tmp/phpmyadmin.conf<span class="bu"> ]</span>; <span class="kw">then</span></span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-f</span> /vagrant/tmp/phpmyadmin.conf <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mv</span> /vagrant/tmp/phpmyadmin.conf /etc/apache2/sites-available/phpmyadmin.conf</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="ex">a2ensite</span> phpmyadmin.conf</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">else</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;&amp;2</span> <span class="bu">echo</span> <span class="st">&quot;Error: phpmyadmin.conf not found&quot;</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">fi</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;&amp;</span><span class="dv">2</span> <span class="bu">echo</span> <span class="st">&quot;Error: phpmyadmin.conf not found&quot;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="ex">service</span> apache2 restart</span></code></pre></div>
 <p>We put a virtual host configuration for the PHPMyAdmin page into the right place, like we did with our web app in the last post. Finally we restart the apache server. Our <em>phpmyadmin.conf</em> looks like this</p>

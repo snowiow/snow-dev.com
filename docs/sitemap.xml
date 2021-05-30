@@ -7,13 +7,6 @@
   </url>
 
   <url>
-    <loc>https://snow-dev.com/posts/migrate-from-serverless-to-cdk.html</loc>
-    <lastmod>2020-12-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
     <loc>https://snow-dev.com/posts/next-level-dotfiles-with-ansible.html</loc>
     <lastmod>2019-10-11</lastmod>
     <changefreq>weekly</changefreq>

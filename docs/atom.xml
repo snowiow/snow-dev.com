@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom">
   <title>snow-dev.com</title>
   <id>https://snow-dev.com</id>
-  <updated>2020-12-20T17:59:16+01:00</updated>
+  <updated>2021-05-30T16:47:25+02:00</updated>
   <subtitle>A blog about linux, vim, devops and various other tech topics</subtitle>
   <link href="https://snow-dev.com"></link>
   <author>
@@ -87,6 +87,16 @@
     <id>tag:snow-dev.com,2019-10-11:/posts/next-level-dotfiles-with-ansible.html</id>
     <link href="https://snow-dev.com/posts/next-level-dotfiles-with-ansible.html" rel="alternate"></link>
     <summary type="html">In the life of every linux enthusiast comes the point, where he has a lot of individual configuration build up and wants to migrate these settings over to another machine as seamlessly as possible. At this point a whole philosophy of how to do this is coming into play. Today this philosophy is bundled under the name: dotfiles. Historically dotfiles are the config files, which lie in your home directory.</summary>
+    <author>
+      <name>Marcel Patzwahl</name>
+    </author>
+  </entry>
+  <entry>
+    <title>Setup pass on multiple devices</title>
+    <updated>2021-04-11T00:00:00Z</updated>
+    <id>tag:snow-dev.com,2021-04-11:/posts/setup-pass-on-multiple-devices.html</id>
+    <link href="https://snow-dev.com/posts/setup-pass-on-multiple-devices.html" rel="alternate"></link>
+    <summary type="html"></summary>
     <author>
       <name>Marcel Patzwahl</name>
     </author>

@@ -15,6 +15,7 @@
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -198,8 +199,8 @@
 <p>Because we save trustworthy information in those variables, we don’t actually set them in a normal <code>*.tf</code> file. These files are checked into version control, so we don’t want to write those informations down in those files. Instead we use <code>*.tfvars</code> files, which aren’t checked into version control.</p>
 <p>As said in the beginning, mongodb atlas isn’t supported by terraform officially. So we need to install the third party provider. To install the provider you need to have <a href="https://golang.org/">go</a> installed. With go installed you can get the package and symlink the executable to the plugin folder of terraform:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">go</span> get github.com/akshaykarle/terraform-provider-mongodbatlas</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> -s <span class="va">$GOPATH</span>/bin/terraform-provider-mongodbatlas <span class="kw">\</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>      <span class="ex">~/.terraform.d/plugins/</span></span></code></pre></div>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-s</span> <span class="va">$GOPATH</span>/bin/terraform-provider-mongodbatlas <span class="dt">\</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>      ~/.terraform.d/plugins/</span></code></pre></div>
 <p>If you do a <code>terraform init</code> again, you are able to initialize the mongodbatlas provider as well.</p>
 <p>With everything set up, we can start creating the MongoDB Atlas cluster. The first thing needed is a project (former known as groups). Projects are a sort of grouping to isolate different environments from each other or to configure different alert settings. For a full description head over to the <a href="https://docs.atlas.mongodb.com/tutorial/manage-projects/">official documentation</a>. We create a new file called <code>atlas.tf</code> for all our MongoDB Atlas resources. There we create a project first:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode tcl"><code class="sourceCode tcl"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">resource</span> <span class="st">&quot;mongodbatlas_project&quot;</span> <span class="st">&quot;this&quot;</span> <span class="kw">{</span></span>
@@ -297,22 +298,22 @@
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div>
 <p>Now we create a small shell script, which will be executed as soon as the instance is started.</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Update YUM&quot;</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> yum -y update</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> yum <span class="at">-y</span> update</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Install Docker&quot;</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> yum install -y docker</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> yum install <span class="at">-y</span> docker</span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Start Docker&quot;</span></span>
 <span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> service docker start</span>
 <span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Login to ECR (your Docker Registry)&quot;</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="va">$(</span><span class="ex">aws</span> ecr get-login --no-include-email --region eu-central-1<span class="va">)</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="va">$(</span><span class="ex">aws</span> ecr get-login <span class="at">--no-include-email</span> <span class="at">--region</span> eu-central-1<span class="va">)</span></span>
 <span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Start docker container&quot;</span></span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="kw">\</span></span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-p</span> 80:80 <span class="kw">\</span></span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--env</span> <span class="st">&quot;MONGO_DSN=</span><span class="va">${mongodb_dsn}</span><span class="st">&quot;</span> <span class="kw">\</span></span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--env</span> <span class="st">&quot;MONGO_DB=app&quot;</span> <span class="kw">\</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="dt">\</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">-p</span> 80:80 <span class="dt">\</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">--env</span> <span class="st">&quot;MONGO_DSN=</span><span class="va">${mongodb_dsn}</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">--env</span> <span class="st">&quot;MONGO_DB=app&quot;</span> <span class="dt">\</span></span>
 <span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>  <span class="va">${container_img_url}</span></span></code></pre></div>
 <p>Basically this installs docker, downloads the image from the container repository URL, where I uploaded it and executes it. As environment variables I give the container the DSN of the MongoDB cluster, the container repository URL and the database, which will always be called app, so it is hardcoded here. The DSN and repository URL values are interpolated, so we need a way to fill in the actual values. We do this by creating a template file as a data source in terraform:</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode tcl"><code class="sourceCode tcl"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>data <span class="st">&quot;template_file&quot;</span> <span class="st">&quot;user_data&quot;</span> <span class="kw">{</span></span>
@@ -369,7 +370,7 @@
 <span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>  <span class="kw">}</span></span>
 <span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div>
 <p>This policy consists of two statements. The first one allows an action to authorize ourselfs with the ECR, which we do in the <code>user_data.sh</code> script with this statement:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="va">$(</span><span class="ex">aws</span> ecr get-login --no-include-email --region eu-central-1<span class="va">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="va">$(</span><span class="ex">aws</span> ecr get-login <span class="at">--no-include-email</span> <span class="at">--region</span> eu-central-1<span class="va">)</span></span></code></pre></div>
 <p>As a resource <code>*</code> was chosen, because the <code>ecr:GetAuthorizationToken</code> action is global and can’t be restricted to a specific resource. The second statement allows the download of the image. Here we defined the ARN of the specific repository, we want to pull from, because we don’t want to allow our EC2 instance to pull from every repository we have in our account.</p>
 <p>With this policy document, we can create an actual policy from it, which will be attached to our <code>example-app-role</code>:</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode tcl"><code class="sourceCode tcl"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">resource</span> <span class="st">&quot;aws_iam_policy&quot;</span> <span class="st">&quot;ecr&quot;</span> <span class="kw">{</span></span>

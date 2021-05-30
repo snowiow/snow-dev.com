@@ -16,6 +16,7 @@
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -159,9 +160,9 @@
 <span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="dt">        TX packets 4660814  bytes 2524959215 (2.3 GiB)</span></span>
 <span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="dt">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span></span></code></pre></div>
 <p>As you can see in the output, I am connected via wifi. So the IP address of interest is under <em>inet</em> in the <em>wlan0</em> block. If you are connected via cable, there should be an <em>inet</em> entry in the <em>eth0</em> block. Now we know where to clone the repository from like this:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>$ <span class="fu">git</span> clone git@<span class="op">&lt;</span>your-inet-entry-here<span class="op">&gt;</span>:/home/git/new-project.git</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git clone git@<span class="op">&lt;</span>your-inet-entry-here<span class="op">&gt;</span>:/home/git/new-project.git</span></code></pre></div>
 <p>In my case the command would look like this:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>$ <span class="fu">git</span> clone git@192.168.178.48:/home/git/new-project.git</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git clone git@192.168.178.48:/home/git/new-project.git</span></code></pre></div>
 <h1 id="push-your-first-change">Push your first change</h1>
 <p>Let’s add a file with</p>
 <pre><code>$ touch test.txt</code></pre>
