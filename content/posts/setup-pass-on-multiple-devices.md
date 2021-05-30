@@ -2,6 +2,7 @@
 title: Setup pass on multiple devices
 author: Marcel Patzwahl
 date: 2021-05-30
+description: "I recently started using a wonderfully simple password manager called pass. I wanted to check it out for a long time, but now I finally got some time and incentive to finally do so. Even though the web- and manpage are very helpful, I had to search quite a bit around to make it work between my phone and Laptop, so I wanted to streamline the process in this post. We will setup pass on an Arch Linux machine first and then sync our existing password store to a MacBook and an Android Phone. So without further ado let's get started!"
 ---
 
 I recently started using a wonderfully simple password manager called
