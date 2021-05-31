@@ -21,12 +21,12 @@ your-package-manager install pass
 ```
 for example in Arch Linux it's just:
 ```sh
-pacman -S pass
+sudo pacman -S pass
 ```
 pass should be available in every major package manager.
 
 Before we actually initiate the password store, we need a gpg key which is used
-to encrypt our passwords. To do this we do the following:
+to encrypt our passwords. To do this, we proceed as follows:
 
 ```sh
 gpg --full-gen-key
@@ -103,7 +103,7 @@ pass git init
 ```
 
 Now our password-store is a git repository and every change will be a git
-commit (examples follow later). Git will be our primary tool to sync pass
+commit (examples follow later). git will be our primary tool to sync pass
 between multiple devices and it actually works pretty well with the automatic
 commits pass does for us. But before we go into the synchronization, let's get
 to know the basic usage of pass a little better.
@@ -119,9 +119,9 @@ examples just to get a feel for this tool.
 pass insert test
 ```
 
-asks you twice about an existing password. This password is then stored as a
-file in the `.password-store` directory, which is encrypted via our gpg key we
-created earlier. 
+This command will ask you twice about an existing password. This password is
+then stored as a file in the `.password-store` directory, which is encrypted via
+our gpg key we created earlier.
 
 We can also store our passwords in a directory tree structure if we split the
 names with a slash:
