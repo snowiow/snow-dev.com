@@ -430,7 +430,7 @@ Since we started with a git repository on our second machine right away, every
 change gets already committed automatically. Remember to push your changes to
 the remote when you modify your password store and pull again from your other
 devices. You can also automate the pushing and pulling by setting a CRON job
-for example, which pushes and pulls once an hour. This works surprisingly well
+that pushes and pulls e.g. once per hour. This works surprisingly well
 already, because normally you don't work on all your devices in parallel. Even
 if you should run into merge conflicts, you can use git's capabilities to either
 rebase onto the HEAD or do a merge commit and be in sync again.
