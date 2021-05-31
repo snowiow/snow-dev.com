@@ -298,7 +298,7 @@ cloning it onto our other devices. Let's start with the MacBook.
 # Syncing to another Machine
 
 Since Mac OSX and Linux both built onto Unix, the process is quite
-similar. Just replace `brew` with the package manager of your OS and you should
+similar. Just replace `brew` with your operating system's package manager and you should
 be good to go. You should have git access already configured on your second
 machine, because this won't be covered explicitly in this post.
 
