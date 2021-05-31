@@ -212,7 +212,7 @@ Password Store
 └── test
 ```
 
-As you can see, this prints a nice tree of all the passwords, we created during
+As you can see, this prints a nice tree of all the passwords we have created in 
 this section.
 
 ## pass git commands
