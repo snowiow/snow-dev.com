@@ -137,7 +137,7 @@ This creates a `mail` directory in the `.password-store` directory and puts a
 
 Often we don't want to only store a password, but also some additional
 information like the username and the URL to which the password belongs. This
-is also pretty straight forward. We just pass the `-m` flag for a multiline
+is also pretty straightforward. We just pass the `-m` flag for a multiline
 password. Let's try this by overriding the last password we added earlier:
 
 ```sh
