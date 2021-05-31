@@ -104,7 +104,7 @@ pass git init
 
 Now our password-store is a git repository and every change will be a git
 commit (examples follow later). Git will be our primary tool to sync pass
-between multiple devices and it actually works pretty great with the automatic
+between multiple devices and it actually works pretty well with the automatic
 commits pass does for us. But before we go into the synchronization, let's get
 to know the basic usage of pass a little better.
 
@@ -538,4 +538,3 @@ setup is quite worth it, because pass is so simple and mainly makes use of
 already established technologies. This attribute makes it easily integrable into
 almost any process you need secrets for and makes the handling with passwords
 not only easy, but also secure.
-
