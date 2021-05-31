@@ -443,7 +443,7 @@ To add new devices, you only need to setup these few steps:
 2. clone your password-store repository
 3. install the pass cli
 
-This is the same for setting up pass on a phone. However how you do each step is
+This is the same for setting up pass on a phone. However, how you do each step is
 slightly different. This is why we cover this explicitly as well now for the
 example of an Android Phone.
 
