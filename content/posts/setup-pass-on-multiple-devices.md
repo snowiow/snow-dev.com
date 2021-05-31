@@ -233,7 +233,7 @@ our password store to be able to sync our passwords between different machines.
 ## Closing words on pass usage
 
 Even though we didn't cover every possible pass command here, I hope you got a
-grasp of how easy and straight forward it is to interact with your passwords via
+grasp of how easy and straightforward it is to interact with your passwords via
 the pass CLI. It also doesn't get much harder from here. If you are searching
 for another functionality, you can view the pass man pages via:
 
