@@ -15,6 +15,7 @@
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -104,7 +105,7 @@
 <p>In this post I want to go over a simple Serverless example and how we are able to migrate this project with the help of this new CDK module.</p>
 <h1 id="the-serverless-example-application">The Serverless example application</h1>
 <p>As a starting point we take the <a href="https://www.serverless.com/examples/aws-node-rest-api-with-dynamodb/">Rest API with DynamoDB</a> example from the Serverless website. You can install it on your machine like this to go along:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">serverless</span> install -u https://github.com/serverless/examples/tree/master/aws-node-rest-api-with-dynamodb -n  aws-node-rest-api-with-dynamodb</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">serverless</span> install <span class="at">-u</span> https://github.com/serverless/examples/tree/master/aws-node-rest-api-with-dynamodb <span class="at">-n</span>  aws-node-rest-api-with-dynamodb</span></code></pre></div>
 <p>We slightly cut down the example to have a reason to do a migration. Namely we remove the <em>iamRoleStatements</em> and environment variable from the <code>serverless.yml</code>. This will be the part we want to add to the CDK Code as a showcase how to add new infrastructure components to the existing stack. Now the <code>serverless.yml</code> should look like this:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">service</span><span class="kw">:</span><span class="at"> aws-node-rest-api-with-dynamodb</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -204,10 +205,10 @@ Couldn&#39;t create the todo item.</code></pre>
 <h1 id="introducing-cdk-into-an-existing-serverless-project">Introducing CDK into an existing Serverless project</h1>
 <p>We are now at the point, where we want to add new stuff to our infrastructure, but don’t want to do it via CloudFormation. Instead we want to move the existing stack to CDK, but don’t want to recreate everything from scratch and also keep the DynamoDB with all its data as is (Yes, we waited around two years between chapter one and two).</p>
 <p>To keep the new CDK code separated, we initiate the CDK project in a new subdirectory:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>$ <span class="fu">mkdir</span> cdk-infra <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> cdk-infra <span class="kw">&amp;&amp;</span> <span class="ex">cdk</span> init app --language=typescript</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir cdk-infra <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> cdk-infra <span class="kw">&amp;&amp;</span> <span class="ex">cdk</span> init app <span class="at">--language</span><span class="op">=</span>typescript</span></code></pre></div>
 <p>We also move everything specific to the Lambda Code in another subdirectory.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>$ <span class="bu">cd</span> .. <span class="kw">&amp;&amp;</span> <span class="fu">mkdir</span> code<span class="kw">;</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> todos package* node_modules/ code<span class="kw">;</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd .. <span class="kw">&amp;&amp;</span> <span class="fu">mkdir</span> code<span class="kw">;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> todos package<span class="pp">*</span> node_modules/ code<span class="kw">;</span></span></code></pre></div>
 <h1 id="let-cdk-use-the-existing-cloudformation-stack">Let CDK use the existing CloudFormation stack</h1>
 <p>Now we want to import the existing stack into CDK. For this we use the new <em>cloudformation-include</em> module. We can install it in the <code>cdk-infra</code> subdirectory via npm:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install @aws-cdk/cloudformation-include</span></code></pre></div>

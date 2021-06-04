@@ -15,6 +15,7 @@
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -109,13 +110,13 @@
 <p>In the previous post we’ve set up the apache web server successfully. Now it’s time to add MySQL and PHP to finish the LAMP stack. Let’s start with MySQL first and add a <em>mysql.sh</em> file to the <strong>sh</strong> directory. We write the following lines into that file.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">debconf-set-selections</span> <span class="op">&lt;&lt;&lt;</span> <span class="st">&quot;mysql-server mysql-server/root_password password my_pw&quot;</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">debconf-set-selections</span> <span class="op">&lt;&lt;&lt;</span> <span class="st">&quot;mysql-server mysql-server/root_password_again password my_pw&quot;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install -y mysql-server libapache2-mod-auth-mysql</span></code></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install <span class="at">-y</span> mysql-server libapache2-mod-auth-mysql</span></code></pre></div>
 <p>The first two lines set values for the upcoming installation dialog of MySQL. The installation dialog will ask us for a password and to repeat it. Because we want to setup MySQL automatically without any interaction, we preset those fields with our password of choice. In this case <strong>my_pw</strong>. Afterwards we install MySQL and an extra package for apache. Afterwards we copy over the config file of MySQL onto the guest system.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span><span class="bu"> [</span> <span class="ot">-f</span> /vagrant/tmp/my.cnf<span class="bu"> ]</span>; <span class="kw">then</span></span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-f</span> /vagrant/tmp/my.cnf <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mv</span> /vagrant/tmp/my.cnf /etc/mysql/my.cnf</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">else</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;&amp;2</span> <span class="bu">echo</span> <span class="st">&quot;Error: my.cnf not found&quot;</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">fi</span></span></code></pre></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;&amp;</span><span class="dv">2</span> <span class="bu">echo</span> <span class="st">&quot;Error: my.cnf not found&quot;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div>
 <p>We do it exactly the same way, as we did with the <em>apache.conf</em>. First we place the <em>my.cnf</em> in our <em>conf</em> directory. Afterwards we add a file provisioner to our <em>Vagrantfile</em>.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>config<span class="at">.vm.provision</span> <span class="st">&quot;file&quot;</span>, <span class="wa">source: </span><span class="st">&quot;conf/my.cnf&quot;</span>, <span class="wa">destination: </span><span class="st">&quot;/vagrant/tmp/my.cnf&quot;</span></span></code></pre></div>
 <p>This time it’s important to replace a custom config file with the original, because in our modified version we switch the following line from:</p>
@@ -129,20 +130,20 @@
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">debconf-set-selections</span> <span class="op">&lt;&lt;&lt;</span> <span class="st">&quot;mysql-server mysql-server/root_password password my_pw&quot;</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ex">debconf-set-selections</span> <span class="op">&lt;&lt;&lt;</span> <span class="st">&quot;mysql-server mysql-server/root_password_again password my_pw&quot;</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install -y mysql-server libapache2-mod-auth-mysql php5-mysql</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install <span class="at">-y</span> mysql-server libapache2-mod-auth-mysql php5-mysql</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span><span class="bu"> [</span> <span class="ot">-f</span> /vagrant/tmp/my.cnf<span class="bu"> ]</span>; <span class="kw">then</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-f</span> /vagrant/tmp/my.cnf <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mv</span> /vagrant/tmp/my.cnf /etc/mysql/my.cnf</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="kw">else</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;&amp;2</span> <span class="bu">echo</span> <span class="st">&quot;Error: my.cnf not found&quot;</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="kw">fi</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;&amp;</span><span class="dv">2</span> <span class="bu">echo</span> <span class="st">&quot;Error: my.cnf not found&quot;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="ex">service</span> mysql restart</span></code></pre></div>
 <p>Final thing we need to do is adding the shell script as a shell provisioner to our <em>Vagrantfile</em>.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>config<span class="at">.vm.provision</span> <span class="st">&quot;shell&quot;</span>, <span class="wa">path: </span><span class="st">&quot;sh/mysql.sh&quot;</span></span></code></pre></div>
 <p>Now let’s install PHP as well. This is pretty straight forward. Our <em>php.sh</em> looks like this:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env bash</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install -y php5 libapache2-mod-php5 php5-mcrypt php5-curl php5-mysql</span></code></pre></div>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install <span class="at">-y</span> php5 libapache2-mod-php5 php5-mcrypt php5-curl php5-mysql</span></code></pre></div>
 <p>Afterwards we also add it as a provisioner</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>config<span class="at">.vm.provision</span> <span class="st">&quot;shell&quot;</span>, <span class="wa">path: </span><span class="st">&quot;sh/php.sh&quot;</span></span></code></pre></div>
 <p>Which results in the following <em>Vagrantfile</em></p>
@@ -166,7 +167,7 @@
 <p>A lot of stuff is happening now and for the first time it will take some time to fire up the vagrant machine. If vagrant booted up successfully, we add an <em>index.php</em> in the directory above our <em>Vagrantfile</em>. This is our project directory. I won’t show anything big here, just a proof of concept</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;?php</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">phpinfo</span><span class="ot">();</span></span></code></pre></div>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">phpinfo</span>()<span class="ot">;</span></span></code></pre></div>
 <p>If you browse to <strong>192.168.33.10</strong> on your host system, you should see an info page about the running PHP version, similar to this</p>
 <p><img src="/images/phpinfo.png" alt="phpinfo" title="phpinfo" /></p>
 <p>Congratulations! You’ve done it! To suspend your vagrant machine just type the following in the same spot, where you did the <em>vagrant up</em></p>

@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="google-site-verification" content="LYZAMZyp5IGDHDRhRMjN0VoDglk1rEoj9nYv62BRxfQ" />
+  <meta name="author" content="Marcel Patzwahl" />
   <meta name="dcterms.date" content="2019-10-11" />
   <title>snow-dev.com :: Next level dotfiles with Ansible</title>
   <style>
@@ -15,6 +16,7 @@
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -95,6 +97,7 @@
     <article>
 <section class="header">
     Posted on 2019-10-11
+    by Marcel Patzwahl
 </section>
 <hr class="section-head">
 <section>
@@ -132,7 +135,7 @@
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> nvim</span></span></code></pre></div>
 <p>As always we give this block a name and set the desired host. This represents the key of the hosts init file, we defined in the beginning. Ansible will take the stuff under that key and execute the roles, which are defined afterwards, for this host.</p>
 <p>Now we execute the Ansible playbook script via:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ansible-playbook</span> --ask-become-pass -i hosts roles.yml</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ansible-playbook</span> <span class="at">--ask-become-pass</span> <span class="at">-i</span> hosts roles.yml</span></code></pre></div>
 <p>The <em>–ask-become-pass</em> flag needs to be given, because we have at least one block, which needs root access. This causes Ansible to ask for your password in the beginning. Ansible saves this password during execution and uses it every time it finds the <code>become: yes</code> block. The <em>-i</em> flag specifies the inventory, where the hosts are defined. In our case we pass the <em>hosts</em> file. As the main argument we pass Ansible the <em>roles.yml</em>, which then executes the roles defined in that file. This should give you something like this output (if you already have those packages installed) or a slightly different output, because Ansbible will install them now. Also this should be executable by every Linux distribution as long as the package names match.</p>
 <p><img src="/images/ansible_output_1.png" alt="Ansible Output" title="Ansible Output" /></p>
 <p>As a quality of live addition I would create a shell script called <a href="https://github.com/snowiow/snow/blob/master/install">install</a> or something, which itself executes the <em>ansible-playbook</em> command above. The command itself is very daunting to type over and over again. I also use the shell script for executing the <em>ansible-playbook</em> with different flags on different systems and pass environment variables, which are then used by Ansible.</p>
@@ -174,7 +177,7 @@
 <li>You depend again on other python dependencies, which are needed by Ansible</li>
 </ol>
 <p>Especially reason 2 is very problematic, because if you use the universal way of installing python packages via pip, you get problems with your systems package manager. If other installed packages have the same dependencies as Ansible does, your Package manager won’t notice that the dependency was already installed there via pip and will fail while trying to override the files. Trying to solve this issue by using virtual environments brought even more problems to the table, because I needed even more dependencies. That’s why I went with just doing</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> pacman -S ansible</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> pacman <span class="at">-S</span> ansible</span></code></pre></div>
 <p>or</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install ansible</span></code></pre></div>
 <p>instead of pulling the whole dependency hell into my dotfiles repository.</p>

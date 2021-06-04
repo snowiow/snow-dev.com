@@ -15,6 +15,7 @@
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -120,13 +121,13 @@
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">&lt;/Directory&gt;</span></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">&lt;/VirtualHost&gt;</span></span></code></pre></div>
 <p>This is the virtual host definition. The first line says that it’s listening on port 80, which is the default port. The <em>DocumentRoot</em> is the path to our webspace, which was symlinked to the vagrant synced directory in an earlier post. <em>ServerName</em> is the address, how you can access the page and the <em>ServerAlias</em> is the alternative if the <em>ServerName</em> isn’t accessible. The following two lines are the paths to the access and error log of our virtual host. If anything bad happens, those two files are the place to start troubleshooting. The following lines are some directory options about what the web app is allowed to do and what not. Next we need a new shell script, which we call <em>mysite.sh</em>. Everything required to setup your project(composer update, migrations etc.) will be defined in this script. In this tutorial we won’t do all this, but only activating our virtual host address.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span><span class="bu"> [</span> <span class="ot">-f</span> /vagrant/tmp/mysite.conf<span class="bu"> ]</span>; <span class="kw">then</span></span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-f</span> /vagrant/tmp/mysite.conf <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">chown</span> <span class="va">$USER</span>:<span class="va">$USER</span> /var/www/html</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mv</span> /vagrant/tmp/mysite.conf /etc/apache2/sites-available/mysite.conf</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="ex">a2ensite</span> mysite.conf</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">else</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;&amp;2</span> <span class="bu">echo</span> <span class="st">&quot;Error: mysite.conf not found&quot;</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">fi</span></span></code></pre></div>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;&amp;</span><span class="dv">2</span> <span class="bu">echo</span> <span class="st">&quot;Error: mysite.conf not found&quot;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div>
 <h1 id="make-changes-effective">Make changes effective</h1>
 <pre><code>service apache2 restart</code></pre>
 <p>Most of this should be familiar to you from the previous chapters. First we check if the file exists in our temp directory. If it does, we create the directory for our project and set the owner of this directory. Afterwards we move the file to the <em>sites-available</em> directory of apache and enable it. To make sure all settings are active, we restart the apache demon. As you already know, we need to get the <em>mysite.conf</em> into the <em>tmp</em> directory. That’s why we add another file provisioner to our <em>Vagrantfile.</em></p>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="google-site-verification" content="LYZAMZyp5IGDHDRhRMjN0VoDglk1rEoj9nYv62BRxfQ" />
+  <meta name="author" content="Marcel Patzwahl" />
+  <meta name="dcterms.date" content="2021-05-30" />
+  <title>snow-dev.com :: Setup pass on multiple devices</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+<header>
+    <div class="logo">
+        <a href="/">snow-dev.com</a>
+    </div>
+    <nav>
+        <a href="/" title="Home"><i class="fas fa-home"></i></a>
+        <a href="/about.html" title="About"><i class="fas fa-info"></i></a>
+        <a href="/archive.html" title="Archive"><i class="fas fa-archive"></i></a>
+        <a href="/rss.xml" title="RSS Feed"><i class="fas fa-rss"></i></a>
+        <a href="/atom.xml" title="Atom Feed"><i class="fas fa-atom"></i></a>
+        <a href="https://github.com/snowiow" title="Github"><i class="fab fa-github"></i></a>
+    </nav>
+</header>
+    <h1>Setup pass on multiple devices</h1>
+    <article>
+<section class="header">
+    Posted on 2021-05-30
+    by Marcel Patzwahl
+</section>
+<hr class="section-head">
+<section>
+<p>I recently started using a wonderfully simple password manager called <a href="https://www.passwordstore.org/">pass</a>. I wanted to check it out for a long time, but now I finally got some time and incentive to finally do so. Even though the web- and manpage are very helpful, I had to search quite a bit around to make it work between my phone and Laptop, so I wanted to streamline the process in this post. We will setup pass on an Arch Linux machine first and then sync our existing password store to a MacBook and an Android Phone. So without further ado let’s get started!</p>
+<h1 id="installing-pass">Installing pass</h1>
+<p>Installing pass should be as easy as:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">your-package-manager</span> install pass</span></code></pre></div>
+<p>for example in Arch Linux it’s just:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> pacman <span class="at">-S</span> pass</span></code></pre></div>
+<p>pass should be available in every major package manager.</p>
+<p>Before we actually initiate the password store, we need a gpg key which is used to encrypt our passwords. To do this, we proceed as follows:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gpg</span> <span class="at">--full-gen-key</span></span></code></pre></div>
+<p>Afterwards you get a couple of questions, which you can mostly answer with the defaults. The only exception I made, was to use the biggest keysize possible. Here is the full dialogue:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Please</span> select what kind of key you want:</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>   <span class="kw">(</span><span class="ex">1</span><span class="kw">)</span> <span class="ex">RSA</span> and RSA <span class="er">(</span><span class="ex">default</span><span class="kw">)</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>   <span class="kw">(</span><span class="ex">2</span><span class="kw">)</span> <span class="ex">DSA</span> and Elgamal</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>   <span class="kw">(</span><span class="ex">3</span><span class="kw">)</span> <span class="ex">DSA</span> <span class="er">(</span><span class="ex">sign</span> only<span class="kw">)</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>   <span class="kw">(</span><span class="ex">4</span><span class="kw">)</span> <span class="ex">RSA</span> <span class="er">(</span><span class="ex">sign</span> only<span class="kw">)</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">(</span><span class="ex">14</span><span class="kw">)</span> <span class="ex">Existing</span> key from card</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">ins</span><span class="kw">)</span><span class="ex">Your</span> selection<span class="pp">?</span> 1</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="ex">RSA</span> keys may be between 1024 and 4096 bits long.</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">ins</span><span class="kw">)</span><span class="ex">What</span> keysize do you want<span class="pp">?</span> <span class="er">(</span><span class="ex">3072</span><span class="kw">)</span> <span class="ex">4096</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="ex">Requested</span> keysize is 4096 bits</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="ex">Please</span> specify how long the key should be valid.</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>         <span class="ex">0</span> = key does not expire</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      <span class="op">&lt;</span>n<span class="op">&gt;</span>  = <span class="ex">key</span> expires in n days</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="op">&lt;</span>n<span class="op">&gt;</span>w <span class="ex">=</span> key expires in n weeks</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      <span class="op">&lt;</span>n<span class="op">&gt;</span>m <span class="ex">=</span> key expires in n months</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>      <span class="op">&lt;</span>n<span class="op">&gt;</span>y <span class="ex">=</span> key expires in n years</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">ins</span><span class="kw">)</span><span class="ex">Key</span> is valid for<span class="pp">?</span> <span class="er">(</span><span class="ex">0</span><span class="kw">)</span> <span class="ex">0</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="ex">Key</span> does not expire at all</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">ins</span><span class="kw">)</span><span class="ex">Is</span> this correct<span class="pp">?</span> <span class="er">(</span><span class="ex">y/N</span><span class="kw">)</span> <span class="ex">y</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="ex">GnuPG</span> needs to construct a user ID to identify your key.</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">ins</span><span class="kw">)</span><span class="ex">Real</span> name: Your Name</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">ins</span><span class="kw">)</span><span class="ex">Email</span> address: your.name@address.com</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">ins</span><span class="kw">)</span><span class="ex">Comment:</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="ex">You</span> selected this USER-ID:</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Your Name &lt;your.name@address.com&gt;&quot;</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">ins</span><span class="kw">)</span><span class="ex">Change</span> <span class="er">(</span><span class="ex">N</span><span class="kw">)</span><span class="ex">ame,</span> <span class="er">(</span><span class="ex">C</span><span class="kw">)</span><span class="ex">omment,</span> <span class="er">(</span><span class="ex">E</span><span class="kw">)</span><span class="ex">mail</span> or <span class="er">(</span><span class="ex">O</span><span class="kw">)</span><span class="ex">kay/</span><span class="er">(</span><span class="ex">Q</span><span class="kw">)</span><span class="ex">uit?</span> O</span></code></pre></div>
+<p>If everything worked out fine, you should now see your gpg key with:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gpg</span> <span class="at">--list-keys</span></span></code></pre></div>
+<p>Output:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">/home/snow/.gnupg/pubring.kbx</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">--------------------------------</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pub</span>   rsa4096 2021-04-11 [SC]</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>      <span class="ex">0abcE883def59ghi422Dsggo1226C853FF98C17</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uid</span>           [ultimate] Marcel Patzwahl <span class="op">&lt;</span>my.name@address.com<span class="op">&gt;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="ex">sub</span>   rsa4096 2021-04-11 [E]</span></code></pre></div>
+<p>Now we are able to create our password-store with:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pass</span> init 0abcE883def59ghi422Dsggo1226C853FF98C17</span></code></pre></div>
+<p>Here we explicitly pass the gpg key id to pass (this post will probably contain a lot of these puns). This way it’s set as the default key and we don’t get asked about the gpg key each time we encrypt/decrypt a password. If you forget about passing the key id initially, you can also do this on an already existing password-store. Then the gpg key is just applied to the existing store.</p>
+<p>Finally we want to activate git for our password-store:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pass</span> git init</span></code></pre></div>
+<p>Now our password-store is a git repository and every change will be a git commit (examples follow later). git will be our primary tool to sync pass between multiple devices and it actually works pretty well with the automatic commits pass does for us. But before we go into the synchronization, let’s get to know the basic usage of pass a little better.</p>
+<h1 id="basic-usage-of-pass">Basic Usage of pass</h1>
+<p>Even though this isn’t an intro into the pass cli itself, we want to go through some examples just to get a feel for this tool.</p>
+<h2 id="create-an-existing-password">Create an existing password</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pass</span> insert test</span></code></pre></div>
+<p>This command will ask you twice about an existing password. This password is then stored as a file in the <code>.password-store</code> directory, which is encrypted via our gpg key we created earlier.</p>
+<p>We can also store our passwords in a directory tree structure if we split the names with a slash:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pass</span> insert mail/test.com</span></code></pre></div>
+<p>This creates a <code>mail</code> directory in the <code>.password-store</code> directory and puts a <code>test.com</code> file in it. This file again is encrypted with our gpg key.</p>
+<h2 id="create-a-password-with-more-metadata">Create a password with more metadata</h2>
+<p>Often we don’t want to only store a password, but also some additional information like the username and the URL to which the password belongs. This is also pretty straightforward. We just pass the <code>-m</code> flag for a multiline password. Let’s try this by overriding the last password we added earlier:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pass</span> insert <span class="at">-m</span> mail/test.com</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">An</span> entry already exists for mail/test.com. Overwrite it<span class="pp">?</span> [y/N] y</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Enter</span> contents of mail/test.com and press Ctrl+D when finished:</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="ex">my-secret-password</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="ex">url:</span> https://test.com</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="ex">username:</span> snow</span></code></pre></div>
+<p>First we accept to override the existing password and the we are able to write multiple lines. The first line is always only the password, followed by an arbitrary number of <code>key: value</code> pairs, splitted by a colon. When you are done press <code>CTRL+D</code> to save and exit. As we will see later, these additional fields can be used by different pass clients, to directly open a url or also insert the username in a form of a website.</p>
+<h2 id="generate-a-new-password">Generate a new password</h2>
+<p>You can also generate new passwords like this:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pass</span> generate generated-password</span></code></pre></div>
+<p>Output:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> generated password for generated-password is:</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">6y</span><span class="op">&lt;</span>a\+57Eh<span class="kw">&amp;</span><span class="ex">@L@@O6ax</span><span class="kw">|</span><span class="ex">MK</span><span class="st">&quot;;{</span></span></code></pre></div>
+<p>You can also pass <code>-n</code> to the generate command to generate a password without symbols and add a number after the name to set the length of the generated password.</p>
+<h2 id="showing-and-copying-passwords">Showing and copying passwords</h2>
+<p>To show the test password we created earlier, you call:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pass</span> show test</span></code></pre></div>
+<p>or only:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pass</span> test</span></code></pre></div>
+<p>To also copy the password into your clipboard you pass the <code>-c</code> flag.</p>
+<h2 id="show-all-passwords-in-the-password-store">Show all passwords in the password store</h2>
+<p>This is:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pass</span> list</span></code></pre></div>
+<p>or just:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pass</span></span></code></pre></div>
+<p>Output:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Password</span> Store</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> generated-password</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> mail</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="ex">│  </span> └── test.com</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="ex">└──</span> test</span></code></pre></div>
+<p>As you can see, this prints a nice tree of all the passwords we have created in this section.</p>
+<h2 id="pass-git-commands">pass git commands</h2>
+<p>pass is tightly integrated with git. You could already see this when executing one of the commands before. pass is always automatically creating a commit with a meaningful message for every operation we did. For example:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">[master</span> f71e270] Add generated password for generated-password.</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a> <span class="ex">1</span> file changed, 0 insertions<span class="er">(</span><span class="ex">+</span><span class="kw">)</span><span class="ex">,</span> 0 deletions<span class="er">(</span><span class="ex">-</span><span class="kw">)</span></span></code></pre></div>
+<p>Starting with <code>pass git</code> we are able to execute basically any git command on the <code>.password-store</code> directory. We will use this knowledge to setup a remote repository for our password store to be able to sync our passwords between different machines.</p>
+<h2 id="closing-words-on-pass-usage">Closing words on pass usage</h2>
+<p>Even though we didn’t cover every possible pass command here, I hope you got a grasp of how easy and straightforward it is to interact with your passwords via the pass CLI. It also doesn’t get much harder from here. If you are searching for another functionality, you can view the pass man pages via:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">man</span> pass</span></code></pre></div>
+<p>The manpage describes all the commands and arguments you can pass to them in a very intuitive fashion. You should also already know how pass works behind the curtain by now, just by interacting with it for a bit. It’s really just a minimal CLI tool, which leverages other unix technologies already present like gnupg (gpg), git and files. pass really deserves the name “the standard unix password manager” because it shows very nicely what the unix philosophy is all about.</p>
+<p>In the coming sections we come to the actual core of this blog post: How do we manage our password-store on multiple devices? We start by creating a remote repository, which will act as our single source of truth with which all our clients will sync their passwords.</p>
+<h1 id="sync-the-password-store-with-a-remote-repository">Sync the password store with a remote repository</h1>
+<p>First we need to decide where we want to host our remote repository. I decided to this on my Raspberry Pi. See this earlier blog post of mine, where I describe in detail, <a href="https://snow-dev.com/posts/build-your-own-git-server-with-a-raspberry-pi.html">how to setup a Git Server with your Raspberry Pi</a></p>
+<p>But you could even host your password store in a public GitHub repository if you like. People would see the structure of your password store, but wouldn’t be able to see the actual passwords, because they can’t encrypt them without your gpg key. However I prefer to keep it completely private, but however you decide, you just need the remote url of the repository to follow along.</p>
+<p>When you have the remote url you can add it to your existing password store via:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pass</span> git remote add origin git@address.com:snow/pass.git</span></code></pre></div>
+<p>Afterwards you should see the remote with:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pass</span> git remote <span class="at">-v</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">origin</span>  git@address.com:snow/pass.git <span class="er">(</span><span class="ex">fetch</span><span class="kw">)</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="ex">origin</span>  git@address.com:snow/pass.git <span class="er">(</span><span class="ex">push</span><span class="kw">)</span></span></code></pre></div>
+<p>If it looks the same, but with your remote address, you are now able to push your current state to the remote:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pass</span> git push origin master</span></code></pre></div>
+<p>Now that we have stored the password store to a remote repository, we can start cloning it onto our other devices. Let’s start with the MacBook.</p>
+<h1 id="syncing-to-another-machine">Syncing to another Machine</h1>
+<p>Since Mac OSX and Linux both build onto Unix, the process is pretty similar. Just replace <code>brew</code> with the package manager of your OS and you should be good to go. You should have git access already configured on your second machine, because this won’t be covered explicitly in this post.</p>
+<p>First you need to export and transfer your existing GPG secret key to your new machine, because you want to be able to encrypt and decrypt passwords there as well. To get the secret key id we first list our secret keys:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gpg</span> <span class="at">--list-secret-keys</span></span></code></pre></div>
+<p>Then we take our key id and export it like this:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gpg</span> <span class="at">--export-secret-key</span> <span class="op">&lt;</span>your-secret-key-id<span class="op">&gt;</span> <span class="op">&gt;</span> secret.gpg</span></code></pre></div>
+<p>Now we need to take the generated file <code>secret.gpg</code> and share it with our second machine. This can be done in various ways, like copying it over via SSH. I shared it via <a href="https://syncthing.net/">Syncthing</a> with my other device.</p>
+<p>When you have the secret key on your second device you can import it via:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gpg</span> <span class="at">--import</span> <span class="op">&lt;</span>path-to-file<span class="op">&gt;</span></span></code></pre></div>
+<p>A little side note: Always make sure you use gpg2, since pass is using gpg2 by default. If you installed gpg via <code>brew</code> on Mac OSX, you use gpg2 by default. The same goes for Arch Linux. But this is not the case for every distro on earth. So make sure <code>gpg</code> and <code>gpg2</code> both direct to <code>gpg2</code>. Otherwise you could get into trouble doing things with pass, when gpg keys were created with gpg one for example.</p>
+<p>Now we want to list our secret keys again and see if it was imported successfully:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gpg</span> <span class="at">--list-secret-keys</span></span></code></pre></div>
+<p>In the output you will see something like this in the <code>uid</code> row:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uid</span>           [ unknown] <span class="op">&lt;</span>Your UID<span class="op">&gt;</span></span></code></pre></div>
+<p>The unknown means, the key isn’t trusted yet. To trust the key fully, we need to do the following:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gpg</span> <span class="at">--edit-key</span> <span class="op">&lt;</span>your-key-id<span class="op">&gt;</span></span></code></pre></div>
+<p>Output:</p>
+<pre><code>gpg (GnuPG) 2.2.27; Copyright (C) 2021 Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Secret key is available.
+
+sec  rsa4096/...
+     created: 2021-04-07  expires: never       usage: SC
+     trust: unknown       validity: unknown
+ssb  rsa4096/...
+     created: 2021-04-07  expires: never       usage: E
+[ unknown] (1). ...
+(ins)gpg&gt; </code></pre>
+<p>In the GPG shell, which just opened just type and send <code>trust</code>, choose the maximum trust level (5), <code>save</code> and afterwards you can <code>quit</code>. Here is the complete dialogue:</p>
+<pre><code>(ins)gpg&gt; trust
+sec  rsa4096/...
+     created: 2021-04-07  expires: never       usage: SC
+     trust: unknown       validity: unknown
+ssb  rsa4096/...
+     created: 2021-04-07  expires: never       usage: E
+[ unknown] (1). ...
+
+Please decide how far you trust this user to correctly verify other users&#39; keys
+(by looking at passports, checking fingerprints from different sources, etc.)
+
+  1 = I don&#39;t know or won&#39;t say
+  2 = I do NOT trust
+  3 = I trust marginally
+  4 = I trust fully
+  5 = I trust ultimately
+  m = back to the main menu
+
+(ins)Your decision? 5
+(ins)Do you really want to set this key to ultimate trust? (y/N) y
+
+sec  rsa4096/...
+     created: 2021-04-07  expires: never       usage: SC
+     trust: ultimate      validity: unknown
+ssb  rsa4096/...
+     created: 2021-04-07  expires: never       usage: E
+[ unknown] (1). ...
+Please note that the shown key validity is not necessarily correct
+unless you restart the program.
+
+(ins)gpg&gt; quit</code></pre>
+<p>If you list your secret keys again, you should see the box <code>[ultimate]</code> in the uid row instead of <code>[unknown]</code>.</p>
+<p>Next we install pass via:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install pass</span></code></pre></div>
+<p>and we clone the repository to the <code>.password-store</code> directory in our <code>$HOME</code>:</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone git@address.com:/pass.git ~/.password-store</span></code></pre></div>
+<p>and we are done already. You can list your password store with <code>pass</code>, get one of our earlier created passwords with <code>pass test</code> and so on, like it was on our original machine.</p>
+<p>Since we started with a git repository on our second machine right away, every change gets already committed automatically. Remember to push your changes to the remote when you modify your password store and pull again from your other devices. You can also automate the pushing and pulling by setting a CRON job for example, which pushes and pulls once an hour. This works surprisingly well already, because normally you don’t work on all your devices in parallel. Even if you should run into merge conflicts, you can use git’s capabilities to either rebase onto the HEAD or do a merge commit and be in sync again.</p>
+<h1 id="sync-to-a-phone">Sync to a phone</h1>
+<p>To add new devices, you only need to setup these few steps:</p>
+<ol class="incremental" type="1">
+<li>setup the gpg key</li>
+<li>clone your password-store repository</li>
+<li>install the pass cli</li>
+</ol>
+<p>This is the same for setting up pass on a phone. However how you do each step is slightly different. This is why we cover this explicitly as well now for the example of an Android Phone.</p>
+<p>First step again is getting the secret key file, we created earlier on your phone. You can do this via USB file transfer or like I did it: with Syncthing.</p>
+<p>Afterwards we need an app, which can deal with gpg keys. The app I use for this is called <em>OpenKeychain</em>. Download it from F-Droid or the Play Store and open it. You should see the following welcome screen:</p>
+<p><img src="/images/openkeychain.png" alt="openkeychain welcome screen"
+title="openkeychain welcome screen" /></p>
+<p>Select <em>OPEN KEY FROM FILE</em> and click on the directory symbol on the newly opened dialogue to select the gpg key file:</p>
+<p><img src="/images/openkeychain2.png" alt="openkeychain import key"
+title="openkeychain import key" /></p>
+<p>Now your GPG key is also setup on your phone. Next we install the <em>Password Store</em> app and open it:</p>
+<p><img src="/images/password-store1.png" alt="password-store opening screen"
+title="password-store opening screen" /></p>
+<p>We select <em>CLONE REMOTE REPO</em> and give it the url of our remote repo and the way we want to authenticate. If you are normally using SSH Keys, you can choose SSH and either generate a new key and share it or import one you created before. By generating and sharing, you can share the public ssh key with the server you try to clone the git repository from and will immediately be able to sync with the repository.</p>
+<p>After you cloned the repository, you need to allow the Password Store to access OpenKeychain and afterwards you are able to encrypt and decrypt passwords here as well.</p>
+<p>A little tip at the end: if you swipe down on the password list inside of your Password Store app, it syncs with your remote repository and the state on your phone is up to date again.</p>
+<h1 id="why-password-store">Why Password Store?</h1>
+<p>Now that we have our multi setup completed we can now collect the fruits of our labor. One of pass’ biggest pros is: you have so many great integrations to use with your new password manager, it’s outstanding!</p>
+<p>You can directly get passwords into your clipboard via different launchers like dmenu on linux or alfred on Mac OS. You already saw the Android App, which makes Password Store usage on phones a breeze. There is a browser integration for Firefox and Chrome. You can have different GUI apps, like you are used to from other password managers. If you set additional fields like URLs or your usernames, many of the tools can make use of them. For example the browser integrations know where to suggest what, based on the url field you’ve set and also offer username completion. There is a plugin for different editors like Emacs. You can extend pass with different additions to also support OTPs for example.</p>
+<p>You are also able to integrate it with any scripts you write, because it’s just a neat little CLI tool. One example I use, is to get my mail password from pass for offlineimap to sync my mail with my machine. The way how to get the password can be scripted in python. There I just open an external process call to the pass CLI to retrieve the password. <a href="https://github.com/snowiow/snow/blob/master/roles/offlineimap/files/offlineimap.py#L7">See my dotfiles</a> for more details on how to do it.</p>
+<p>Also when you use Emacs, you can make use of the built-in plugin <code>auth-source-pass</code>, which automatically gets secrets from pass for things you want to do within Emacs and need a password for, like sending mails, joining IRC, login to GitHub to use Forge and so on.</p>
+<p>With the default settings you are asked for your GPG password every time, but you can also cache it for a longer time. For this you need to set the following fields in the <em>~/.gnupg/gpg_agent.conf</em>:</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="dt">max-cache-ttl 86400</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="dt">default-cache-ttl 86400</span></span></code></pre></div>
+<p>The values are in seconds and in my case, cache the password for one day. You can find more infos on GPG in the <a href="https://wiki.archlinux.org/title/GnuPG#Cache_passwords">arch wiki</a>.</p>
+<p>And the final plus is: you learn a bit about GPG itself during the process, which finds usage also in many other areas besides of pass. For example you can use your GPG key for other neat things like: signing releases/commits in git, sign or encrypt your mails and many things more.</p>
+<p>I hope this post helped you getting rid of some initial difficulties with setting up pass on multiple devices. The bit of effort you spend on the initial setup is quite worth it, because pass is so simple and mainly makes use of already established technologies. This attribute makes it easily integrable into almost any process you need secrets for and makes the handling with passwords not only easy, but also secure.</p>
+</section>
+</article>
+<footer>
+    <nav>
+        <a href="impressum.html" title="Impressum">Impressum</a>
+        <a href="datenschutz.html" title="Datenschutz">Datenschutz</a>
+    </nav>
+</footer>
+</body>
+</html>

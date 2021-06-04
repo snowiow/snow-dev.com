@@ -15,6 +15,7 @@
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -114,46 +115,46 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>config<span class="at">.vm.box</span> <span class="kw">=</span> <span class="st">&quot;ubuntu/trusty64&quot;</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>config<span class="at">.vm.provision</span> <span class="st">&quot;shell&quot;</span>, <span class="wa">path: </span><span class="st">&quot;sh/update.sh&quot;</span></span></code></pre></div>
 <p>This statement is pretty straight forward. We tell vagrant that we want to provision something, which is of the type <em>shell</em> and the path to the shell script is <em>sh/update.sh</em>. If we would start our system now, it would do a system update at the beginning. Now that we are working on the latest state of the system, we can start adding new software. It’s time to create the apache webserver. We add a new filed called <em>apache.sh</em> to the sh directory, which we created earlier. We start off in the same way, by downloading the software via apt-get:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install -y apache2</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install <span class="at">-y</span> apache2</span></code></pre></div>
 <p>Followed by this:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> !<span class="bu"> [</span> <span class="ot">-L</span> /var/www/html<span class="bu"> ]</span>; <span class="kw">then</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rm</span> -rf /var/www/html</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ln</span> -fs /vagrant/projects /var/www/html</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">fi</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="ot">! </span><span class="bu">[</span> <span class="ot">-L</span> /var/www/html <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rm</span> <span class="at">-rf</span> /var/www/html</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ln</span> <span class="at">-fs</span> /vagrant/projects /var/www/html</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div>
 <p>Here we delete any symlinks on the <em>/var/www/html</em> location, if they exist and create a new one afterwards. The symlink will be between our projects directory and the apache web server. So everything which changes in one place, will automatically change in the other location as well. It’s like the synced folders, but it’s an inter system feature of linux. The next part is optional. I copied the whole <em>apache.conf</em> out of it’s base installation and keep it on my host system to change some things. On system startup I copy it back onto the guest and replace the base config with it.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span><span class="bu"> [</span> <span class="ot">-f</span> /vagrant/tmp/apache2.conf<span class="bu"> ]</span>; <span class="kw">then</span></span>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-f</span> /vagrant/tmp/apache2.conf <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mv</span> /vagrant/tmp/apache2.conf /etc/apache2/apache2.conf</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">else</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;&amp;2</span> <span class="bu">echo</span> <span class="st">&quot;Error: apache2.conf not found&quot;</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">fi</span></span></code></pre></div>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;&amp;</span><span class="dv">2</span> <span class="bu">echo</span> <span class="st">&quot;Error: apache2.conf not found&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div>
 <p>This is a check, if a file is in the <em>vagrant/tmp</em> directory, called <em>apache2.conf</em>. If there is one, it will be moved over to the position of the original file. Otherwise an error is printed to the error channel of the console. But how do we get the file to the <em>tmp</em> directory? Remember that shell provision isn’t the only thing? Because now file provisioning comes into play.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>config<span class="at">.vm.provision</span> <span class="st">&quot;file&quot;</span>, <span class="wa">source: </span><span class="st">&quot;conf/apache2.conf&quot;</span>, <span class="wa">destination: </span><span class="st">&quot;/vagrant/tmp/apache2.conf&quot;</span></span></code></pre></div>
 <p>We add this line under the shell provision. This copies the file from the <em>conf</em> directory to the <em>tmp</em> directory of the guest system. Why we need to do this extras step, you may ask? Why not copy it directly to the original location? Well, it’s pretty simple: In the provision context you don’t have any root rights. But later in the shell script you do. That’s why we provide a place for our files, where the shell scripts have access to later. The next thing I do, is changing the rights on the webspace and the log directory, to be able to create and read files without any problems.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> -R 755 /var/www</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> -R 755 /var/log</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> 755 /var/www</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> 755 /var/log</span></code></pre></div>
 <p>The last thing I do is activating mod rewrite, which allows web applications to rewrite the routing of requests. Many frameworks rely heavily on this feature.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">a2enmod</span> rewrite</span></code></pre></div>
 <p>And this is our full <em>apache2.sh</em> script:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env bash</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install -y apache2</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install <span class="at">-y</span> apache2</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Symlink the apache webspace to the shared folder of the host and guest syste,</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> !<span class="bu"> [</span> <span class="ot">-L</span> /var/www/html<span class="bu"> ]</span>; <span class="kw">then</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rm</span> -rf /var/www/html</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ln</span> -fs /vagrant/projects /var/www/html</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="kw">fi</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="ot">! </span><span class="bu">[</span> <span class="ot">-L</span> /var/www/html <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rm</span> <span class="at">-rf</span> /var/www/html</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ln</span> <span class="at">-fs</span> /vagrant/projects /var/www/html</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#Copy the apache2.conf to the right location</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span><span class="bu"> [</span> <span class="ot">-f</span> /vagrant/tmp/apache2.conf<span class="bu"> ]</span>; <span class="kw">then</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-f</span> /vagrant/tmp/apache2.conf <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mv</span> /vagrant/tmp/apache2.conf /etc/apache2/apache2.conf</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="kw">else</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;&amp;2</span> <span class="bu">echo</span> <span class="st">&quot;Error: apache2.conf not found&quot;</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="kw">fi</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;&amp;</span><span class="dv">2</span> <span class="bu">echo</span> <span class="st">&quot;Error: apache2.conf not found&quot;</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">#grant permission to webserver</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> -R 777 /var/www</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> -R 777 /var/log</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> 777 /var/www</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> 777 /var/log</span>
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="co">#enable mod_rewrite</span></span>
 <span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="ex">a2enmod</span> rewrite</span></code></pre></div>

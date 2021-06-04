@@ -15,6 +15,7 @@
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
     div.sourceCode { margin: 1em 0; }
     pre.sourceCode { margin: 0; }
@@ -118,13 +119,13 @@
 <p>The next thing we need to do, is closing the SATA controller to the old disk</p>
 <pre><code>VBoxManage storageattach &lt;name-of-the-vm&gt; --storagectl &quot;IDE Controller&quot; --port 0 --device 0 --medium none</code></pre>
 <p>Here are two things, you need to take care of. First thing is <em><name-of-the-vm></em>. This is the same as the directory name, where the initial VMDK file is placed. The second thing is, that your storagectl could have another name. You can find it out by opening the _*.vbox_ file, which is in the same directory as the initial VMDK file. This should be a normal XML file. Now look out for this tag</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;StorageControllers&gt;</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;StorageController</span><span class="ot"> name=</span><span class="st">&quot;IDE Controller&quot;</span><span class="ot"> type=</span><span class="st">&quot;PIIX4&quot;</span><span class="ot"> PortCount=</span><span class="st">&quot;2&quot;</span><span class="ot"> useHostIOCache=</span><span class="st">&quot;true&quot;</span><span class="ot"> Bootable=</span><span class="st">&quot;true&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;AttachedDevice</span><span class="ot"> type=</span><span class="st">&quot;HardDisk&quot;</span><span class="ot"> hotpluggable=</span><span class="st">&quot;false&quot;</span><span class="ot"> port=</span><span class="st">&quot;0&quot;</span><span class="ot"> device=</span><span class="st">&quot;0&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;Image</span><span class="ot"> uuid=</span><span class="st">&quot;{42b28bc6-a130-45be-9603-ee16779459d5}&quot;</span><span class="kw">/&gt;</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/AttachedDevice&gt;</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;/StorageController&gt;</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/StorageControllers&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">StorageControllers</span>&gt;</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">StorageController</span><span class="ot"> name=</span><span class="st">&quot;IDE Controller&quot;</span><span class="ot"> type=</span><span class="st">&quot;PIIX4&quot;</span><span class="ot"> PortCount=</span><span class="st">&quot;2&quot;</span><span class="ot"> useHostIOCache=</span><span class="st">&quot;true&quot;</span><span class="ot"> Bootable=</span><span class="st">&quot;true&quot;</span>&gt;</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">AttachedDevice</span><span class="ot"> type=</span><span class="st">&quot;HardDisk&quot;</span><span class="ot"> hotpluggable=</span><span class="st">&quot;false&quot;</span><span class="ot"> port=</span><span class="st">&quot;0&quot;</span><span class="ot"> device=</span><span class="st">&quot;0&quot;</span>&gt;</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">Image</span><span class="ot"> uuid=</span><span class="st">&quot;{42b28bc6-a130-45be-9603-ee16779459d5}&quot;</span>/&gt;</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">AttachedDevice</span>&gt;</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">StorageController</span>&gt;</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">StorageControllers</span>&gt;</span></code></pre></div>
 <p>As you can see, we are interested in the name of the <em>StorageController</em> tag. If there is something else than “IDE Controller”, you need to use that name for the <em>–storagectl</em> flag instead. Now we need to close the old medium</p>
 <pre><code>VBoxManage closemedium disk &lt;name-of-the-disk&gt;.vmdk</code></pre>
 <p>When it is closed, we can attach our new resized VMDK</p>
