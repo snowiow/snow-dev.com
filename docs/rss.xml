@@ -4,7 +4,7 @@
     <link>https://snow-dev.com</link>
     <description>A blog about linux, vim, devops and various other tech topics</description>
     <managingEditor>marcel.patzwahl@posteo.de (Marcel Patzwahl)</managingEditor>
-    <pubDate>Sun, 30 May 2021 16:47:25 +0200</pubDate>
+    <pubDate>Fri, 04 Jun 2021 21:52:25 +0200</pubDate>
     <item>
       <title>Build your own Git Server with a Raspberry Pi</title>
       <link>https://snow-dev.com/posts/build-your-own-git-server-with-a-raspberry-pi.html</link>
@@ -76,9 +76,9 @@
     <item>
       <title>Setup pass on multiple devices</title>
       <link>https://snow-dev.com/posts/setup-pass-on-multiple-devices.html</link>
-      <description></description>
+      <description>I recently started using a wonderfully simple password manager called pass. I wanted to check it out for a long time, but now I finally got some time and incentive to finally do so. Even though the web- and manpage are very helpful, I had to search quite a bit around to make it work between my phone and Laptop, so I wanted to streamline the process in this post. We will setup pass on an Arch Linux machine first and then sync our existing password store to a MacBook and an Android Phone. So without further ado let&#39;s get started!</description>
       <author>Marcel Patzwahl</author>
-      <pubDate>Sun, 11 Apr 2021 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 30 May 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>The power of Vim Plugins: CtrlP</title>
