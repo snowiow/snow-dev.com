@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="google-site-verification" content="LYZAMZyp5IGDHDRhRMjN0VoDglk1rEoj9nYv62BRxfQ" />
+  <meta name="dcterms.date" content="2025-07-06" />
+  <title>snow-dev.com :: Relative Line Numbers with Emacs built in Features</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+<header>
+    <div class="logo">
+        <a href="/">snow-dev.com</a>
+    </div>
+    <nav>
+        <a href="/" title="Home"><i class="fas fa-home"></i></a>
+        <a href="/about.html" title="About"><i class="fas fa-info"></i></a>
+        <a href="/archive.html" title="Archive"><i class="fas fa-archive"></i></a>
+        <a href="/rss.xml" title="RSS Feed"><i class="fas fa-rss"></i></a>
+        <a href="/atom.xml" title="Atom Feed"><i class="fas fa-atom"></i></a>
+        <a href="https://github.com/snowiow" title="Github"><i class="fab fa-github"></i></a>
+    </nav>
+</header>
+    <h1>Relative Line Numbers with Emacs built in Features</h1>
+    <article>
+<section class="header">
+    Posted on 2025-07-06
+</section>
+<hr class="section-head">
+<section>
+<p>I’ve been a vivid <a
+href="https://github.com/emacs-evil/evil">evil</a> citizen in the world
+of Emacs for many years now. One of the must do settings in my opinion
+is, when using VIM keys for movement: Relative Line Numbers. It helps
+tremendeously with navigating multiple lines up and down, because you
+always see the amount of rows you need to move.</p>
+<p>This sounds a bit cryptic so let’s visualize this in on an example.
+Here is a code view with absolute line numbers:
+<img src="/images/relative_line_numbers_with_emacs_built_in_features_absolute_example.png" alt="Absolute Line Numbers Example" title="Absolute Line Numbers Example"></p>
+<p>Let’s say we are on line 1373 and want to change a type in line 1396.
+We could just mash <code>k</code> a bunch of times (23 to be exact) or
+we could input <code>23k</code> once and be there right away. But with
+absolute line numbers it’s not always easy to find out the number of
+lines you need to move, without doing some math in your head.</p>
+<p>This is where relative line numbers come into play:
+<img src="/images/relative_line_numbers_with_emacs_built_in_features_relative_example.png" alt="Relative Line Numbers Example" title="Relative Line Numbers Example"></p>
+<p>Again we want to move 23 lines down. Do you see the difference? You
+only need to read the number, where you want to go and input it before
+<code>j</code> (up) or <code>k</code> (down). No need to distract two
+numbers from each other in your head anymore. When skimming through code
+you do this kind of movement several times in a matter of minutes. Every
+time you just need to look at the number instead of doing mental
+arithmetic. This adds up and will save you a lot of time over the
+day.</p>
+<p>Now that we know that this feature is useful, how do we get it in
+Emacs? Back in Emacs 23.1 <em>linum-mode</em> was introduced, which
+brought the possibility to have line numbers in a column to the left of
+the text. Before this Emacs showed you the line number you were in, in
+the <em>mode-line</em> at the bottom. But many modern editors made the
+number column left to the text a mainstream feature and so Emacs wanted
+to offer it as a feature as well.</p>
+<p>To get relative line numbers with <em>linum-mode</em> you had to
+install a third party package called <a
+href="https://github.com/coldnew/linum-relative">linum-relative</a>,
+because the package itself never included it.</p>
+<p>Fast forward almost exactly 14 years (Emacs 23.1 released on
+2009-07-29) and <em>linum-mode</em> got obselete with 29.1 (Release
+Date: 2023-07-30). The reason was, that it was <a
+href="http://xahlee.info/emacs/emacs/emacs_linum_mode.html">implemented
+in a hacky way</a> and it made Emacs really slow when large files were
+open. Where do we go from here?</p>
+<p>Introducing <em>display-line-numbers-mode</em>: This was a new
+built-in package shipped with Emacs 26 (Release Date: 2018-05-28) which
+should offer the same functionality as <em>linum-mode</em> without
+cracking down on large files. Basically <em>linum-mode</em> in fast.
+With Emacs 29 <em>display-line-numbers-mode</em> is not only an
+alternative to <em>linum-mode</em>, but it’s official successor.</p>
+<p>And the best thing: <strong>it supports relative line numbers out of
+the box</strong>. That’s what got me excited. Solving an issue with
+built-in features instead of having to install more packages. Here is
+what we need to do:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode lisp"><code class="sourceCode commonlisp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(setq-default</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    display-line-numbers-type <span class="dt">&#39;relative</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>(global-display-line-numbers-mode)</span></code></pre></div>
+<p>and at the same time we can get rid of this:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode lisp"><code class="sourceCode commonlisp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(global-linum-mode <span class="kw">t</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>(<span class="kw">use-package</span> linum-relative</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  :custom</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  (linum-relative-backend <span class="dt">&#39;display-line-numbers-mode</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  :config</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  (linum-relative-global-mode))</span></code></pre></div>
+<p>This gives you the same exact functionality in Emacs 29 and above
+with the new built in <em>display-line-numbers-mode</em> package as
+<em>linum-mode</em> + <em>linum-relative</em> gave you. Another great
+alternative feature <em>display-line-numbers-mode</em> offers is to set
+<code>display-line-numbers-type 'visual</code> instead of
+<code>'relative</code>. This gives you relative line numbers based on
+visual lines instead of buffer lines. This means if a line is so so long
+that it continues in the next line of your buffer (which your view,
+where the file content is shown), <code>'visual</code> counts this as
+two lines instead of one, which <code>'relative</code> would do. This
+makes navigation even more precise. Especially if you work on code or
+text with long lines a lot. That’s why I probably will also move further
+to <code>'visual</code>.</p>
+<p>I hope this quicktip is of any help to you. I was first thinking of
+introducing a new category <code>bits</code> with smaller bit sized
+experiences than the normal blog post size of my past postings. But
+looking at the text now and seeing what I ended up with, I will continue
+to have these also under the normal posts.</p>
+</section>
+</article>
+<footer>
+    <nav>
+        <a href="impressum.html" title="Impressum">Impressum</a>
+        <a href="datenschutz.html" title="Datenschutz">Datenschutz</a>
+    </nav>
+</footer>
+</body>
+</html>

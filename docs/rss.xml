@@ -4,7 +4,7 @@
     <link>https://snow-dev.com</link>
     <description>A blog about linux, vim, devops and various other tech topics</description>
     <managingEditor>marcel.patzwahl@posteo.de (Marcel Patzwahl)</managingEditor>
-    <pubDate>Fri, 04 Jun 2021 21:52:25 +0200</pubDate>
+    <pubDate>Sun, 06 Jul 2025 12:40:56 +0200</pubDate>
     <item>
       <title>Build your own Git Server with a Raspberry Pi</title>
       <link>https://snow-dev.com/posts/build-your-own-git-server-with-a-raspberry-pi.html</link>
@@ -47,6 +47,12 @@
       <link>https://snow-dev.com/posts/ecs-cd-with-codepipeline-in-terraform.html</link>
       <description>Last week I came along a problem regarding the deployment of an ECS Service. I wanted to use the newly announced Blue/Green-Deployment powered by CodeDeploy, because for the time being I only needed one Fargate instance to run. The classic ECS Deployment destroyed one instance and started a new one in it&#39;s place. With one instance this would mean, we would have some downtime during the start of the new container.</description>
       <pubDate>Tue, 21 May 2019 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Relative Line Numbers with Emacs built in Features</title>
+      <link>https://snow-dev.com/posts/getting-relative-line-numbers-with-emacs-built-in-features.html</link>
+      <description>I&#39;ve been a vivid evil citizen in the world of Emacs for many years now. One of the must do settings in my opinion is, when using VIM keys for movement: Relative Line Numbers. It helps tremendeously with navigating multiple lines up and down, because you always see the amount of rows you need to move.</description>
+      <pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>A basic Routing approach with PHP</title>
