@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><feed xmlns="http://www.w3.org/2005/Atom">
   <title>snow-dev.com</title>
   <id>https://snow-dev.com</id>
-  <updated>2021-06-04T21:52:25+02:00</updated>
+  <updated>2025-07-06T12:40:56+02:00</updated>
   <subtitle>A blog about linux, vim, devops and various other tech topics</subtitle>
   <link href="https://snow-dev.com"></link>
   <author>
@@ -59,6 +59,13 @@
     <id>tag:snow-dev.com,2019-05-21:/posts/ecs-cd-with-codepipeline-in-terraform.html</id>
     <link href="https://snow-dev.com/posts/ecs-cd-with-codepipeline-in-terraform.html" rel="alternate"></link>
     <summary type="html">Last week I came along a problem regarding the deployment of an ECS Service. I wanted to use the newly announced Blue/Green-Deployment powered by CodeDeploy, because for the time being I only needed one Fargate instance to run. The classic ECS Deployment destroyed one instance and started a new one in it&#39;s place. With one instance this would mean, we would have some downtime during the start of the new container.</summary>
+  </entry>
+  <entry>
+    <title>Relative Line Numbers with Emacs built in Features</title>
+    <updated>2025-07-06T00:00:00Z</updated>
+    <id>tag:snow-dev.com,2025-07-06:/posts/getting-relative-line-numbers-with-emacs-built-in-features.html</id>
+    <link href="https://snow-dev.com/posts/getting-relative-line-numbers-with-emacs-built-in-features.html" rel="alternate"></link>
+    <summary type="html">I&#39;ve been a vivid evil citizen in the world of Emacs for many years now. One of the must do settings in my opinion is, when using VIM keys for movement: Relative Line Numbers. It helps tremendeously with navigating multiple lines up and down, because you always see the amount of rows you need to move.</summary>
   </entry>
   <entry>
     <title>A basic Routing approach with PHP</title>
