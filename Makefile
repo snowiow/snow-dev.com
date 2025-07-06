@@ -10,14 +10,16 @@ CSS_FILES    = $(shell ls content/css/*.css)
 IMAGES       = $(shell find content/images -name '*.*' -printf '$(OUTPUT)/images/%f\n')
 META_FILES   = $(shell find content/metadata -name '*' -printf '$(OUTPUT)/%f\n' | tail +2)
 TARGET_CSS   = $(OUTPUT)/css/style.css
+FAVICON_FILE = content/favicon.ico
 
-build: directories webfonts $(TARGET_CSS) $(IMAGES) $(POSTS) $(INFO_PAGES) $(OUTPUT)/index.html $(OUTPUT)/archive.html $(META_FILES) generate-feeds
+build: directories files webfonts $(TARGET_CSS) $(IMAGES) $(POSTS) $(INFO_PAGES) $(OUTPUT)/index.html $(OUTPUT)/archive.html $(META_FILES) generate-feeds
 
 generate-feeds: install-tools
 	@echo "generating feeds"
 	@feed
 
 directories: $(OUTPUT)/webfonts $(OUTPUT)/css $(OUTPUT)/images $(OUTPUT)/posts
+files: $(OUTPUT)/favicon.ico
 
 $(OUTPUT)/webfonts $(OUTPUT)/images $(OUTPUT)/css $(OUTPUT)/posts:
 	@echo "creating missing directories"
@@ -25,6 +27,10 @@ $(OUTPUT)/webfonts $(OUTPUT)/images $(OUTPUT)/css $(OUTPUT)/posts:
 
 $(OUTPUT)/images/%: content/images/%
 	@echo "copying missing images"
+	@cp $< $@
+
+$(OUTPUT)/favicon.ico: content/favicon.ico
+	@echo "copying favicon.ico"
 	@cp $< $@
 
 webfonts:
