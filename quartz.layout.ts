@@ -38,8 +38,8 @@ export const defaultContentPageLayout: PageLayout = {
         { Component: Component.ReaderMode() },
       ],
     }),
-    Component.Explorer(),
     Component.RecentNotes(),
+    Component.Explorer(),
   ],
   right: [
     Component.Graph(),

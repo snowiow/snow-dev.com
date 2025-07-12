@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en"><head><title>Build your own Git Server with a Raspberry Pi</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="snow garden"/><meta property="og:title" content="Build your own Git Server with a Raspberry Pi"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Build your own Git Server with a Raspberry Pi"/><meta name="twitter:description" content="In this post I want to go into a topic, which I did a few months ago. My goal was to get some of my data away from big cloud hosting platforms back into my own control. The initial spark was a news about a french artist, who had all his pictures on googles platform blogger. His blog was deleted out of no reason and his whole work was lost. You can read the whole storyhere. Scared of a similar scenario, I decided to setup my own cloud with seafile and my own Git server. In this post I will cover how to put up a simple Git server with a basic web fronted to view the repositories."/><meta property="og:description" content="In this post I want to go into a topic, which I did a few months ago. My goal was to get some of my data away from big cloud hosting platforms back into my own control. The initial spark was a news about a french artist, who had all his pictures on googles platform blogger. His blog was deleted out of no reason and his whole work was lost. You can read the whole storyhere. Scared of a similar scenario, I decided to setup my own cloud with seafile and my own Git server. In this post I will cover how to put up a simple Git server with a basic web fronted to view the repositories."/><meta property="og:image:alt" content="In this post I want to go into a topic, which I did a few months ago. My goal was to get some of my data away from big cloud hosting platforms back into my own control. The initial spark was a news about a french artist, who had all his pictures on googles platform blogger. His blog was deleted out of no reason and his whole work was lost. You can read the whole storyhere. Scared of a similar scenario, I decided to setup my own cloud with seafile and my own Git server. In this post I will cover how to put up a simple Git server with a basic web fronted to view the repositories."/><meta property="twitter:domain" content="quartz.jzhao.xyz"/><meta property="og:url" content="https://quartz.jzhao.xyz/posts/Linux/Build-your-own-Git-Server-with-a-Raspberry-Pi"/><meta property="twitter:url" content="https://quartz.jzhao.xyz/posts/Linux/Build-your-own-Git-Server-with-a-Raspberry-Pi"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="In this post I want to go into a topic, which I did a few months ago. My goal was to get some of my data away from big cloud hosting platforms back into my own control. The initial spark was a news about a french artist, who had all his pictures on googles platform blogger. His blog was deleted out of no reason and his whole work was lost. You can read the whole storyhere. Scared of a similar scenario, I decided to setup my own cloud with seafile and my own Git server. In this post I will cover how to put up a simple Git server with a basic web fronted to view the repositories."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" spa-preserve/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  padding: 2rem;
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvbWFyY2VsX3BhdHp3YWhsL3dvcmtzcGFjZS9zbm93LWdhcmRlbi9xdWFydHovY29tcG9uZW50cy9zdHlsZXMiLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTs7QUFHRjtFQUNFO0VBQ0E7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFOztBQUdGO0VBQ0U7O0FBSUY7RUFDRTtFQUNBO0VBQ0EiLCJzb3VyY2VzQ29udGVudCI6WyIuZXhwYW5kLWJ1dHRvbiB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxvYXQ6IHJpZ2h0O1xuICBwYWRkaW5nOiAwLjRyZW07XG4gIG1hcmdpbjogMC4zcmVtO1xuICByaWdodDogMDsgLy8gTk9URTogcmlnaHQgd2lsbCBiZSBzZXQgaW4gbWVybWFpZC5pbmxpbmUudHNcbiAgY29sb3I6IHZhcigtLWdyYXkpO1xuICBib3JkZXItY29sb3I6IHZhcigtLWRhcmspO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1saWdodCk7XG4gIGJvcmRlcjogMXB4IHNvbGlkO1xuICBib3JkZXItcmFkaXVzOiA1cHg7XG4gIG9wYWNpdHk6IDA7XG4gIHRyYW5zaXRpb246IDAuMnM7XG5cbiAgJiA+IHN2ZyB7XG4gICAgZmlsbDogdmFyKC0tbGlnaHQpO1xuICAgIGZpbHRlcjogY29udHJhc3QoMC4zKTtcbiAgfVxuXG4gICY6aG92ZXIge1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICBib3JkZXItY29sb3I6IHZhcigtLXNlY29uZGFyeSk7XG4gIH1cblxuICAmOmZvY3VzIHtcbiAgICBvdXRsaW5lOiAwO1xuICB9XG59XG5cbnByZSB7XG4gICY6aG92ZXIgPiAuZXhwYW5kLWJ1dHRvbiB7XG4gICAgb3BhY2l0eTogMTtcbiAgICB0cmFuc2l0aW9uOiAwLjJzO1xuICB9XG59XG5cbiNtZXJtYWlkLWNvbnRhaW5lciB7XG4gIHBvc2l0aW9uOiBmaXhlZDtcbiAgY29udGFpbjogbGF5b3V0O1xuICB6LWluZGV4OiA5OTk7XG4gIGxlZnQ6IDA7XG4gIHRvcDogMDtcbiAgd2lkdGg6IDEwMHZ3O1xuICBoZWlnaHQ6IDEwMHZoO1xuICBvdmVyZmxvdzogaGlkZGVuO1xuICBkaXNwbGF5OiBub25lO1xuICBiYWNrZHJvcC1maWx0ZXI6IGJsdXIoNHB4KTtcbiAgYmFja2dyb3VuZDogcmdiYSgwLCAwLCAwLCAwLjUpO1xuXG4gICYuYWN0aXZlIHtcbiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gIH1cblxuICAmID4gI21lcm1haWQtc3BhY2Uge1xuICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICAgIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgICBwb3NpdGlvbjogZml4ZWQ7XG4gICAgdG9wOiA1MCU7XG4gICAgbGVmdDogNTAlO1xuICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlKC01MCUsIC01MCUpO1xuICAgIGhlaWdodDogODB2aDtcbiAgICB3aWR0aDogODB2dztcbiAgICBvdmVyZmxvdzogaGlkZGVuO1xuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRlbnQge1xuICAgICAgcGFkZGluZzogMnJlbTtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" spa-preserve/><script src="../../prescript.js" type="application/javascript" spa-preserve></script><script type="application/javascript" spa-preserve>const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://quartz.jzhao.xyz/index.xml"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://quartz.jzhao.xyz/posts/Linux/Build-your-own-Git-Server-with-a-Raspberry-Pi-og-image.webp"/><meta property="og:image:url" content="https://quartz.jzhao.xyz/posts/Linux/Build-your-own-Git-Server-with-a-Raspberry-Pi-og-image.webp"/><meta name="twitter:image" content="https://quartz.jzhao.xyz/posts/Linux/Build-your-own-Git-Server-with-a-Raspberry-Pi-og-image.webp"/><meta property="og:image:type" content="image/.webp"/></head><body data-slug="posts/Linux/Build-your-own-Git-Server-with-a-Raspberry-Pi"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">snow garden</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><p>Search</p><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="recent-notes"><h3>Recent Notes</h3><ul class="recent-ul"><li class="recent-li"><div class="section"><div class="desc"><h3><a href="../../" class="internal">snow garden</a></h3></div><p class="meta"><time datetime="2025-07-12T11:59:58.550Z">Jul 12, 2025</time></p><ul class="tags"></ul></div></li><li class="recent-li"><div class="section"><div class="desc"><h3><a href="../../posts/Emacs/Relative-Line-Numbers-with-Emacs-built-in-Features" class="internal">Relative Line Numbers with Emacs built in Features</a></h3></div><p class="meta"><time datetime="2025-07-05T22:00:00.000Z">Jul 06, 2025</time></p><ul class="tags"><li><a class="internal tag-link" href="../../tags/emacs">emacs</a></li></ul></div></li><li class="recent-li"><div class="section"><div class="desc"><h3><a href="../../posts/Linux/Setup-pass-on-multiple-devices" class="internal">Setup pass on multiple devices</a></h3></div><p class="meta"><time datetime="2021-05-29T22:00:00.000Z">May 30, 2021</time></p><ul class="tags"><li><a class="internal tag-link" href="../../tags/linux">linux</a></li></ul></div></li></ul></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-content"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div class="explorer-content" aria-expanded="false"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../posts/">posts</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../posts/Linux/">Linux</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>Build your own Git Server with a Raspberry Pi</a></div></nav><h1 class="article-title">Build your own Git Server with a Raspberry Pi</h1><p show-comma="true" class="content-meta"><time datetime="2017-06-02T22:00:00.000Z">Jun 03, 2017</time><span>12 min read</span></p><ul class="tags"><li><a href="../../tags/linux" class="internal tag-link">linux</a></li></ul></div></div><article class="popover-hint"><p>In this post I want to go into a topic, which I did a few months ago. My goal
+was to get some of my data away from big cloud hosting platforms back into my
+own control. The initial spark was a news about a french artist, who had all
+his pictures on googles platform blogger. His blog was deleted out of no reason
+and his whole work was lost. You can read the whole story
+<a href="http://fusion.net/story/325231/google-deletes-dennis-cooper-blog/" class="external">here<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>.
+Scared of a similar scenario, I decided to setup my own cloud with seafile and
+my own Git server. In this post I will cover how to put up a simple Git server
+with a basic web fronted to view the repositories. I still use GitHub pretty
+extensively but all my little and non private projects go onto my own Git
+server now. First things first, we need some hardware to get started:</p>
+<ul>
+<li>A Raspberry Pi 3 Model B (older models should be sufficient too, but the newer the more performance you got at your hand)</li>
+<li>5V Micro USB Plug</li>
+<li>A Micro SD Card (the bigger, the better)</li>
+<li>A Raspberry PI 3 Case</li>
+<li>Another Computer to store an OS image on the SD Card (This guide shows the Linux way, but it should also be possible on Windows and OSX)</li>
+<li>An ethernet cable to initially connect your Raspberry Pi to your router</li>
+</ul>
+<p>I also bought an external hard drive where all my Git repositories and cloud
+stuff is stored, but you can also buy a big SD-card and store the repositories
+on it directly. In this guide I will go about the default SD Card way. If you
+want to use an external hard drive, you need to format it to sda4 for example
+and mount it to the point, where you want to have it. All your Git repository
+directories should go there and the mount point will be your Git root.
+Otherwise the procedure is the same as given in this guide.</p>
+<p>One last thing on the notations in this post. Because we need to execute many
+commands from the command line, I will use a short notion for which commands
+have to be executed as which user. If a line starts with the <strong>$</strong> sign, the
+command is executable by a normal user. If you see a <strong>#</strong> in the beginning,
+you need to either execute the command with the <em>sudo</em> utility or be logged in
+as the root user.</p>
+<h1 id="installing-the-os-on-the-sd-card">Installing the OS on the SD-Card<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#installing-the-os-on-the-sd-card" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>I decided to use Arch Linux ARM for the Raspberry Pi, but you are free to use
+anything you want here. The reason why I chose Arch is because it’s a very
+minimal distribution. That said it only installs relevant software and from
+there you are free to go. A warning up front: We will never get to see a GUI,
+like in Raspbian or another Raspberry Pi distribution. On the plus side of
+things is, you will have much more RAM and processor performance for the
+software that really matters. My Raspberry Pi with Seafile and hosting the Git
+site on an nginx server is using around 200Mb/1GB of RAM and about 2% of one of
+the 4 processors on average. So there is plenty of stuff my Raspberry could do
+as well, without getting overwhelmed.</p>
+<p>But let’s get back to the installation: First tricky thing here is to use the
+ARM7 Version. Even through the Raspberry Pi is listed as ARM8 I got huge
+problems to get my wireless up and running. So go and get the Arch Linux ARM7
+<a href="http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz" class="external">here<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>.
+Afterwards you need to follow the installation instructions
+<a href="https://archlinuxarm.org/platforms/armv7/broadcom/raspberry-pi-2" class="external">here<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>.</p>
+<h1 id="configuring-the-os">Configuring the OS<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#configuring-the-os" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>By now you should have installed Arch Linux ARM on the SD-Card, plugged it in
+and you should be logged into your Raspberry Pi (Don’t forget to connect your
+Raspberry Pi to your router if you want to connect via SSH). There were still
+some steps I needed to do to get started with my main project. Here is a short
+list:</p>
+<ul>
+<li><a href="https://wiki.archlinux.org/index.php/Installation_guide#Set_the_keyboard_layout" class="external">Set your keyboard layout<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://wiki.archlinux.org/index.php/Wireless_network_configuration#Manual_setup" class="external">Setup the wifi connection<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+<li><a href="https://wiki.archlinux.org/index.php/Installation_guide#Time_zone" class="external">Set your timezone, locale and hostname<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a></li>
+</ul>
+<h1 id="setting-up-git">Setting up Git<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#setting-up-git" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Now we can get started with our real project. First we need to install Git:</p>
+<pre><code># pacman -S git
+</code></pre>
+<p>Next we create a new Git user, who will be responsible for the repositories:</p>
+<pre><code># adduser -m -g git -s /bin/bash git
+</code></pre>
+<p>The <strong>-m</strong> flag says that we want to create a user directory in <strong>/home</strong>.
+<strong>-g</strong> is the default group of our user and <strong>-s</strong> is the default shell of the
+user. We need to be able to do stuff as the Git user, that’s why he gets a
+shell. That’s it. Now you are basically ready to do Git stuff with your
+Raspberry Pi.</p>
+<h1 id="create-a-new-git-repository">Create a new Git Repository<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#create-a-new-git-repository" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>The next thing we want to do is create a new Git repository. Before we do
+anything Git related, we want to suspend ourselves as the Git user, like this:</p>
+<pre><code># su git
+</code></pre>
+<p>Now we are the Git user and can do stuff in his name. First we need a place,
+where we want to place our repositories. A good place is the home directory of
+the Git user, but it can be anywhere else, where the Git user has write access.
+Now we create a new repository called <em>new-project</em>:</p>
+<pre><code>$ mkdir /home/git/new-project.git &amp;&amp; cd /home/git/new-project.git &amp;&amp; git init --bare
+</code></pre>
+<p>First we create a new directory with a <em>.git</em> ending. You don’t need the
+ending, but it’s a best practice, to let server side repositories end with
+<em>.git</em>. Afterwards we go into that directory and initiate it as a Git
+repository. The <em>bare</em> argument is somewhat optional again, but also a best
+practice. It just means this Git repository doesn’t have a working directory.
+The working directory is where you put your files. On the same level is a
+<em>.git</em> directory with the history and other things in it. The <em>bare</em> argument
+now says that you don’t need the working directory and the main directory can
+become the <em>.git</em> directory. So overall you can remember to use the <em>bare</em>
+argument on the server side of a repository and not on the client side.  #
+Clone your repo Now we want to clone our newly created repository from the
+server. You should already  know the ip of your Raspberry, when you’ve set it
+up via ssh. If you don’t know the IP yet, you can run the command ifconfig as
+root, which should give you something like this as an output:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="ini" data-theme="github-light github-dark"><code data-language="ini" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">#ifconfig</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">eth0: </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">flags</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=4099&lt;UP,BROADCAST,MULTICAST>  mtu 1500</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        ether b8:27:eb:8c:97:af  txqueuelen 1000  (Ethernet)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        RX packets 0  bytes 0 (0.0 B)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        RX errors 0  dropped 0  overruns 0  frame 0</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        TX packets 0  bytes 0 (0.0 B)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">lo: </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">flags</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=73&lt;UP,LOOPBACK,RUNNING>  mtu 65536</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        inet 127.0.0.1  netmask 255.0.0.0</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        inet6 ::1  prefixlen 128  scopeid 0x10&lt;host></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        loop  txqueuelen 1  (Local Loopback)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        RX packets 1004803  bytes 352750188 (336.4 MiB)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        RX errors 0  dropped 0  overruns 0  frame 0</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        TX packets 1004803  bytes 352750188 (336.4 MiB)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">wlan0: </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">flags</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=4163&lt;UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        inet 192.168.178.48  netmask 255.255.255.0  broadcast 192.168.178.255</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        inet6 fe80::ba27:ebff:fed9:c2fa  prefixlen 64  scopeid 0x20&lt;link></span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        ether b8:27:eb:d9:c2:fa  txqueuelen 1000  (Ethernet)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        RX packets 1727438  bytes 275330489 (262.5 MiB)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        RX errors 0  dropped 1561  overruns 0  frame 0</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        TX packets 4660814  bytes 2524959215 (2.3 GiB)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span></span></code></pre></figure>
+<p>As you can see in the output, I am connected via wifi. So the IP address of
+interest is under <em>inet</em> in the <em>wlan0</em> block. If you are connected via cable,
+there should be an <em>inet</em> entry in the <em>eth0</em> block. Now we know where to clone
+the repository from like this:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">$</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> clone</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> git@</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">your-inet-entry-her</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">e</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">></span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">:/home/git/new-project.git</span></span></code></pre></figure>
+<p>In my case the command would look like this:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="sh" data-theme="github-light github-dark"><code data-language="sh" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">$</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> clone</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> git@192.168.178.48:/home/git/new-project.git</span></span></code></pre></figure>
+<h1 id="push-your-first-change">Push your first change<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#push-your-first-change" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>Let’s add a file with</p>
+<pre><code>$ touch test.txt
+</code></pre>
+<p>Now you should have some changes, which you can check with</p>
+<pre><code>$ git status
+</code></pre>
+<p>Now we do our first commit and add the test file to our commit.</p>
+<pre><code>$ git commit -a -m &quot;added test file&quot; &amp;&amp; git push
+</code></pre>
+<p>Congratulations! You first commit has landed on the server.</p>
+<h1 id="initiate-an-existing-project-as-a-raspberry-git-repository">Initiate an existing project as a Raspberry Git repository<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#initiate-an-existing-project-as-a-raspberry-git-repository" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>We pretty much covered everything which you need to know to work with your new
+Git server. But there is one last common use case, which I want to present to
+you. What if you were already working on a project and want to sync it with the
+server? First you have to switch into that directory and make it a Git
+repository like this.</p>
+<pre><code>$ cd /path/to/existing-project &amp;&amp; git init
+</code></pre>
+<p>Same thing on your Raspberry Pi. Create the directory with a <em>.git</em> ending and
+init it with the <em>bare</em> argument (remember to do this as the Git user)</p>
+<pre><code>$ cd /home/git/existing-project.git &amp;&amp; cd /home/git/existing-project.git &amp;&amp; git init --bare
+</code></pre>
+<p>Afterwards your project files can be added to an initial commit like this (this
+happens on your work station again)</p>
+<pre><code>$ git commit -a -m &quot;my first commit&quot;
+</code></pre>
+<p>So far there is nothing special. But now we add our Raspberry Pi as the remote server</p>
+<pre><code>$ git remote add origin git@&lt;your-inet-entry-here>:/home/git/existing-project.git
+</code></pre>
+<p>Again in my case the command would look like this and you have to change it to
+your case accordingly</p>
+<pre><code>$ git remote add origin git@192.16.178.48:/home/git/existing-project.git
+</code></pre>
+<p>Now you can push your fist changes and set the Raspberry Pi as the default origin like this</p>
+<pre><code>$ git push --set-upstream origin master
+</code></pre>
+<p>You are also able to name <em>origin</em> anything you want. <em>Origin</em> is just a
+convention which is used for the default upstream. This was the main part,
+which should get you up to speed with Git on a Raspberry Pi. In the next
+chapter I want to show you, how to set up a simplistic Git web frontend to
+watch your repositories, commits and diffs in the web browser.</p>
+<h1 id="create-a-website-to-view-your-repositories">Create a Website to view your repositories<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#create-a-website-to-view-your-repositories" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>The feature we are are using is the built in gitweb. It’s a minimal web
+frontend to view your code and you should already have seen sites like this
+here and there. For example the project overview of my dotfiles repository
+looks like this:</p>
+<p><img src="../../img/gitweb_example.png" width="auto" height="auto" alt/></p>
+<p>First of all we need a running webserver, to host our Git site. We are going
+for nginx in this tutorial, but it’s also possible to use
+<a href="https://wiki.archlinux.org/index.php/gitweb" class="external">apache<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>. To install nginx, we run</p>
+<pre><code># pacman -S nginx-mainline
+</code></pre>
+<p>Afterwards we also need to install perl-cgi</p>
+<pre><code># pacman -S perl-cgi
+</code></pre>
+<p>Now we start the nginx service via systemd</p>
+<pre><code># systemctl start nginx
+</code></pre>
+<p>You can check if the nginx server is running by looking up the ip address of
+your Raspberry Pi in your browser. In my case this would be navigating
+to <em>192.168.178.48</em>. You should see a success message, that the nginx server is
+running. Because gitweb comes preinstalled with Git, we can directly go into
+activating the gitweb cgi script. Therefor we need to edit
+the <em>/etc/nginx/nginx.conf</em></p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="apache" data-theme="github-light github-dark"><code data-language="apache" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">server {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    listen       </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">80</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    server_name  localhost;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    #charset koi8-r;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    #access_log  logs/host.access.log  main;</span></span>
+<span data-line> </span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    #error_page  404              /404.html;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    # redirect server error pages to the static page /50x.html</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    #</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    error_page   </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">500</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 502</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 503</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 504</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  /50x.html;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    location = /50x.html {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        root   /usr/share/nginx/html;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    location /gitweb.cgi {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            include fastcgi_params;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            gzip </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">off</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            fastcgi_param   SCRIPT_FILENAME  /usr/share/gitweb/gitweb.cgi;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            fastcgi_param   GITWEB_CONFIG  /etc/gitweb.conf;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">            fastcgi_pass    unix:/var/run/fcgiwrap.sock;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    location / {</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        root /usr/share/gitweb;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">        index gitweb.cgi;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    ...</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<p>As you can see in the code snippet, you need to add the gitweb.cgi location
+into the server entity and tell nginx where to find the fastcgi_params and
+pass. You also need to override the default location to be gitweb.cgi. All
+changes you need to do, are highlighted in yellow. Now we need to install
+fcgiwrap. This is a cgi server, which runs our gitweb cgi app.</p>
+<pre><code># pacman -S fcgiwrap
+</code></pre>
+<p>Then we need to add a service config for fcgiwrap to be able to start it via
+systemctl. Create the following
+file _/usr/lib/systemd/system/fcgiwrap.service _with this content</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="ini" data-theme="github-light github-dark"><code data-language="ini" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">[Unit]</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Description</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=Simple server for running CGI applications over FastCGI</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">After</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=syslog.target network.target</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">[Service]</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Type</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=forking</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">Restart</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=on-abort</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">PIDFile</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=/var/run/fcgiwrap.pid</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ExecStart</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=/usr/bin/spawn-fcgi -s /var/run/fcgiwrap.sock -P /var/run/fcgiwrap.pid -u http -g http -- /usr/sbin/fcgiwrap</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">ExecStop</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=/usr/bin/kill -15 $MAINPID</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">[Install]</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">WantedBy</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">=multi-user.target</span></span></code></pre></figure>
+<p>Now we can enable and start the fcgiwrap server for nginx</p>
+<pre><code># systemctl enable nginx fcgiwrap
+# systemctl start nginx fcgiwrap
+</code></pre>
+<p>Hold with me, we are already done. The server is now able to run the gitweb cgi
+app on the root directory of the nginx server. The last thing, we need to do is
+giving gitweb the root directory, where it can find our repositories and set
+the URL according to the Git IP, which we used earlier. To configure these
+things we open up <em>/etc/gitweb.conf</em> and set the content like this:</p>
+<pre><code>our $git_temp = &quot;/tmp&quot;;
+
+# The directories where your projects are. Must not end with a slash.
+our $projectroot = &quot;/home/git&quot;;
+
+# Base URLs for links displayed in the web interface.
+our @git_base_url_list = qw(git://192.168.178.48 http://git@192.168.178.48);
+
+#Syntax Highlighting
+$feature{'highlight'}{'default'} = [1];
+</code></pre>
+<p>The tmp folder can stay as it is. The project root is the home directory of our
+Git user. You need to edit the Git URLs according to your Raspberry’s IP
+address, if it differs to mine. The last option enables highlighting of the
+shown source code on the Git web site, which looks like this</p>
+<p><img src="../../img/gitweb-diff.png" width="auto" height="auto" alt/></p>
+<p>A final restart is required for the changes to take effect</p>
+<pre><code># systemctl restart nginx
+</code></pre>
+<p>Now you can navigate the IP of your Raspberry Pi again, like when you were
+checking if the nginx server was running. You should now see your very own
+gitweb frontend.</p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-content" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul class="toc-content overflow" id="list-1"><li class="depth-0"><a href="#installing-the-os-on-the-sd-card" data-for="installing-the-os-on-the-sd-card">Installing the OS on the SD-Card</a></li><li class="depth-0"><a href="#configuring-the-os" data-for="configuring-the-os">Configuring the OS</a></li><li class="depth-0"><a href="#setting-up-git" data-for="setting-up-git">Setting up Git</a></li><li class="depth-0"><a href="#create-a-new-git-repository" data-for="create-a-new-git-repository">Create a new Git Repository</a></li><li class="depth-0"><a href="#push-your-first-change" data-for="push-your-first-change">Push your first change</a></li><li class="depth-0"><a href="#initiate-an-existing-project-as-a-raspberry-git-repository" data-for="initiate-an-existing-project-as-a-raspberry-git-repository">Initiate an existing project as a Raspberry Git repository</a></li><li class="depth-0"><a href="#create-a-website-to-view-your-repositories" data-for="create-a-website-to-view-your-repositories">Create a Website to view your repositories</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.1</a> © 2025</p><ul><li><a href="https://github.com/jackyzha0/quartz">GitHub</a></li><li><a href="https://discord.gg/cRFFHYye7t">Discord Community</a></li></ul></footer></div></div></body><script type="application/javascript">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module">function f(i,e){if(!i)return;function r(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function t(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}i?.addEventListener("click",r),window.addCleanup(()=>i?.removeEventListener("click",r)),document.addEventListener("keydown",t),window.addCleanup(()=>document.removeEventListener("keydown",t))}function y(i){for(;i.firstChild;)i.removeChild(i.firstChild)}var h=class{constructor(e,r){this.container=e;this.content=r;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),r=this.onMouseMove.bind(this),t=this.onMouseUp.bind(this),o=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",r),document.addEventListener("mouseup",t),window.addEventListener("resize",o),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",r),()=>document.removeEventListener("mouseup",t),()=>window.removeEventListener("resize",o))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let r=this.createButton("+",()=>this.zoom(.1)),t=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(t),e.appendChild(o),e.appendChild(r),this.container.appendChild(e)}createButton(e,r){let t=document.createElement("button");return t.textContent=e,t.className="mermaid-control-button",t.addEventListener("click",r),window.addCleanup(()=>t.removeEventListener("click",r)),t}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}zoom(e){let r=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),t=this.content.getBoundingClientRect(),o=t.width/2,n=t.height/2,c=r-this.scale;this.currentPan.x-=o*c,this.currentPan.y-=n*c,this.scale=r,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){this.scale=1;let e=this.content.querySelector("svg");this.currentPan={x:e.getBoundingClientRect().width/2,y:e.getBoundingClientRect().height/2},this.updateTransform()}},C=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],E;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;E||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let r=E.default,t=new WeakMap;for(let n of e)t.set(n,n.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let a=t.get(s);a&&(s.innerHTML=a)}let n=C.reduce((s,a)=>(s[a]=window.getComputedStyle(document.documentElement).getPropertyValue(a),s),{}),c=document.documentElement.getAttribute("saved-theme")==="dark";r.initialize({startOnLoad:!1,securityLevel:"loose",theme:c?"dark":"base",themeVariables:{fontFamily:n["--codeFont"],primaryColor:n["--light"],primaryTextColor:n["--darkgray"],primaryBorderColor:n["--tertiary"],lineColor:n["--darkgray"],secondaryColor:n["--secondary"],tertiaryColor:n["--tertiary"],clusterBkg:n["--light"],edgeLabelBackground:n["--highlight"]}}),await r.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let n=0;n<e.length;n++){let v=function(){let g=l.querySelector("#mermaid-space"),m=l.querySelector(".mermaid-content");if(!m)return;y(m);let w=c.querySelector("svg").cloneNode(!0);m.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new h(g,m)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},c=e[n],s=c.parentElement,a=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(a),L=a.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),f(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript"></script><script type="application/javascript">
+        const socket = new WebSocket('ws://localhost:3001')
+        // reload(true) ensures resources like images and scripts are fetched again in firefox
+        socket.addEventListener('message', () => document.location.reload(true))
+      </script><script src="../../postscript.js" type="module"></script></html>
