@@ -8,8 +8,8 @@ export const sharedPageComponents: SharedLayout = {
   afterBody: [],
   footer: Component.Footer({
     links: {
-      GitHub: "https://github.com/jackyzha0/quartz",
-      "Discord Community": "https://discord.gg/cRFFHYye7t",
+      GitHub: "https://github.com/snowiow",
+      "Impressum": "/Impressum",
     },
   }),
 }
@@ -36,8 +36,13 @@ export const defaultContentPageLayout: PageLayout = {
         { Component: Component.Darkmode() },
       ],
     }),
+    Component.Explorer({
+        filterFn: (node) => {
+            // exclude files with the tag "explorerexclude"
+            return node.data?.tags?.includes("explorerexclude") !== true
+        },
+    }),
     Component.DesktopOnly(Component.RecentNotes()),
-    Component.Explorer(),
   ],
   right: [
     Component.Graph(),
