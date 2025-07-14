@@ -2,67 +2,67 @@
 <rss version="2.0">
     <channel>
       <title>snow garden</title>
-      <link>https://quartz.jzhao.xyz</link>
+      <link>https://snow-dev.com</link>
       <description>Last 10 notes on snow garden</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
     <title>snow garden</title>
-    <link>https://quartz.jzhao.xyz/</link>
-    <guid>https://quartz.jzhao.xyz/</guid>
+    <link>https://snow-dev.com/</link>
+    <guid>https://snow-dev.com/</guid>
     <description> Hi, my name is Marcel and I’m a Platform Engineer. My current interests are FinOps, AWS, Emacs, Obsidian and all things Linux.</description>
-    <pubDate>Mon, 14 Jul 2025 11:25:52 GMT</pubDate>
+    <pubDate>Mon, 14 Jul 2025 11:28:06 GMT</pubDate>
   </item><item>
     <title>Relative Line Numbers with Emacs built in Features</title>
-    <link>https://quartz.jzhao.xyz/posts/Emacs/Relative-Line-Numbers-with-Emacs-built-in-Features</link>
-    <guid>https://quartz.jzhao.xyz/posts/Emacs/Relative-Line-Numbers-with-Emacs-built-in-Features</guid>
+    <link>https://snow-dev.com/posts/Emacs/Relative-Line-Numbers-with-Emacs-built-in-Features</link>
+    <guid>https://snow-dev.com/posts/Emacs/Relative-Line-Numbers-with-Emacs-built-in-Features</guid>
     <description>I've been a vivid evil citizen in the world of Emacs for many years now. One of the must do settings in my opinion is, when using VIM keys for movement: Relative Line Numbers. It helps tremendously with navigating multiple lines up and down, because you always see the amount of rows you need to move.</description>
     <pubDate>Sat, 05 Jul 2025 22:00:00 GMT</pubDate>
   </item><item>
     <title>Setup pass on multiple devices</title>
-    <link>https://quartz.jzhao.xyz/posts/Linux/Setup-pass-on-multiple-devices</link>
-    <guid>https://quartz.jzhao.xyz/posts/Linux/Setup-pass-on-multiple-devices</guid>
+    <link>https://snow-dev.com/posts/Linux/Setup-pass-on-multiple-devices</link>
+    <guid>https://snow-dev.com/posts/Linux/Setup-pass-on-multiple-devices</guid>
     <description>I recently started using a wonderfully simple password manager called pass. I wanted to check it out for a long time, but now I finally got some time and incentive to finally do so. Even though the web- and manpage are very helpful, I had to search quite a bit around to make it work between my phone and Laptop, so I wanted to streamline the process in this post. We will setup pass on an Arch Linux machine first and then sync our existing password store to a MacBook and an Android Phone. So without further ado let's get started!</description>
     <pubDate>Sat, 29 May 2021 22:00:00 GMT</pubDate>
   </item><item>
     <title>How to migrate from Serverless to CDK</title>
-    <link>https://quartz.jzhao.xyz/posts/AWS/How-to-migrate-from-Serverless-to-CDK</link>
-    <guid>https://quartz.jzhao.xyz/posts/AWS/How-to-migrate-from-Serverless-to-CDK</guid>
+    <link>https://snow-dev.com/posts/AWS/How-to-migrate-from-Serverless-to-CDK</link>
+    <guid>https://snow-dev.com/posts/AWS/How-to-migrate-from-Serverless-to-CDK</guid>
     <description>The Serverless Application Framework was the go to solution to deploy serverless application stacks, like AWS Lambda for quite a while. It offers a very easy to use YAML DSL to deploy common serverless patterns, like a Lambda function behind an API Gateway. However if serverless applications become more complex and consist of more than the default resources, you were back writing at CloudFormation again.</description>
     <pubDate>Thu, 17 Dec 2020 23:00:00 GMT</pubDate>
   </item><item>
     <title>Next level dotfiles with Ansible</title>
-    <link>https://quartz.jzhao.xyz/posts/Linux/Next-level-dotfiles-with-Ansible</link>
-    <guid>https://quartz.jzhao.xyz/posts/Linux/Next-level-dotfiles-with-Ansible</guid>
+    <link>https://snow-dev.com/posts/Linux/Next-level-dotfiles-with-Ansible</link>
+    <guid>https://snow-dev.com/posts/Linux/Next-level-dotfiles-with-Ansible</guid>
     <description>In the life of every linux enthusiast comes the point, where he has a lot of individual configuration build up and wants to migrate these settings over to another machine as seamlessly as possible. At this point a whole philosophy of how to do this is coming into play. Today this philosophy is bundled under the name: dotfiles. Historically dotfiles are the config files, which lie in your home directory.</description>
     <pubDate>Thu, 10 Oct 2019 22:00:00 GMT</pubDate>
   </item><item>
     <title>ECS CD with AWS CodePipeline in Terraform</title>
-    <link>https://quartz.jzhao.xyz/posts/AWS/ECS-CD-with-AWS-CodePipeline-in-Terraform</link>
-    <guid>https://quartz.jzhao.xyz/posts/AWS/ECS-CD-with-AWS-CodePipeline-in-Terraform</guid>
+    <link>https://snow-dev.com/posts/AWS/ECS-CD-with-AWS-CodePipeline-in-Terraform</link>
+    <guid>https://snow-dev.com/posts/AWS/ECS-CD-with-AWS-CodePipeline-in-Terraform</guid>
     <description>Last week I came along a problem regarding the deployment of an ECS Service. I wanted to use the newly announced Blue/Green-Deployment powered by CodeDeploy, because for the time being I only needed one Fargate instance to run. The classic ECS Deployment destroyed one instance and started a new one in it's place. With one instance this would mean, we would have some downtime during the start of the new container.</description>
     <pubDate>Mon, 20 May 2019 22:00:00 GMT</pubDate>
   </item><item>
     <title>VPC Peering with MongoDB Atlas and AWS in Terraform</title>
-    <link>https://quartz.jzhao.xyz/posts/AWS/VPC-Peering-with-MongoDB-Atlas-and-AWS-in-Terraform</link>
-    <guid>https://quartz.jzhao.xyz/posts/AWS/VPC-Peering-with-MongoDB-Atlas-and-AWS-in-Terraform</guid>
+    <link>https://snow-dev.com/posts/AWS/VPC-Peering-with-MongoDB-Atlas-and-AWS-in-Terraform</link>
+    <guid>https://snow-dev.com/posts/AWS/VPC-Peering-with-MongoDB-Atlas-and-AWS-in-Terraform</guid>
     <description>Lately I was doing a lot of "Infrastructure as Code" (IaC) in terraform at work. There was one application, which needed a MongoDB as the primary database. Sadly there is no managed MongoDB service in AWS so far.</description>
     <pubDate>Tue, 25 Dec 2018 23:00:00 GMT</pubDate>
   </item><item>
     <title>Impressum</title>
-    <link>https://quartz.jzhao.xyz/Impressum</link>
-    <guid>https://quartz.jzhao.xyz/Impressum</guid>
+    <link>https://snow-dev.com/Impressum</link>
+    <guid>https://snow-dev.com/Impressum</guid>
     <description>Angaben gemäß § 5 TMG Marcel Patzwahl Kontakt: Telefon: 0170-2809354 E-Mail: marcel (dot) patzwahl (at) posteo (dot) de.</description>
     <pubDate>Sat, 15 Dec 2018 23:00:00 GMT</pubDate>
   </item><item>
     <title>Build your own Git Server with a Raspberry Pi</title>
-    <link>https://quartz.jzhao.xyz/posts/Linux/Build-your-own-Git-Server-with-a-Raspberry-Pi</link>
-    <guid>https://quartz.jzhao.xyz/posts/Linux/Build-your-own-Git-Server-with-a-Raspberry-Pi</guid>
+    <link>https://snow-dev.com/posts/Linux/Build-your-own-Git-Server-with-a-Raspberry-Pi</link>
+    <guid>https://snow-dev.com/posts/Linux/Build-your-own-Git-Server-with-a-Raspberry-Pi</guid>
     <description>In this post I want to go into a topic, which I did a few months ago. My goal was to get some of my data away from big cloud hosting platforms back into my own control. The initial spark was a news about a french artist, who had all his pictures on googles platform blogger. His blog was deleted out of no reason and his whole work was lost. You can read the whole storyhere. Scared of a similar scenario, I decided to setup my own cloud with seafile and my own Git server. In this post I will cover how to put up a simple Git server with a basic web fronted to view the repositories.</description>
     <pubDate>Fri, 02 Jun 2017 22:00:00 GMT</pubDate>
   </item><item>
     <title>Increase disk space of a vagrant machine</title>
-    <link>https://quartz.jzhao.xyz/posts/Linux/Increase-disk-space-of-a-vagrant-machine</link>
-    <guid>https://quartz.jzhao.xyz/posts/Linux/Increase-disk-space-of-a-vagrant-machine</guid>
+    <link>https://snow-dev.com/posts/Linux/Increase-disk-space-of-a-vagrant-machine</link>
+    <guid>https://snow-dev.com/posts/Linux/Increase-disk-space-of-a-vagrant-machine</guid>
     <description>Lately I came across a rather big problem of vagrant Increasing the disk space, because the normal 40GB were in use. There are options to increase RAM or CPU count easily.</description>
     <pubDate>Tue, 25 Oct 2016 22:00:00 GMT</pubDate>
   </item>
