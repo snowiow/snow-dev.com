@@ -12,12 +12,13 @@
     "url": "https://github.com/jackyzha0/quartz.git"
   },
   "scripts": {
-    "build": "npx quartz build --directory=$HOME/Sync/notes/md/digital-garden --output docs",
+    "sync": "rsync -av --delete $HOME/Sync/notes/md/digital-garden/ ./content/",
+    "build": "npx quartz build",
     "quartz": "./quartz/bootstrap-cli.mjs",
     "docs": "npx quartz build --serve -d docs",
     "check": "tsc --noEmit && npx prettier . --check",
     "format": "npx prettier . --write",
-    "serve": "npx quartz build --serve --directory=$HOME/Sync/notes/md/digital-garden --output docs",
+    "serve": "npx quartz build --serve",
     "test": "tsx --test",
     "profile": "0x -D prof ./quartz/bootstrap-cli.mjs build --concurrency=1"
   },
