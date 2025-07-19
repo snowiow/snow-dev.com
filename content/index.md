@@ -1,5 +1,5 @@
 ---
-title: snow garden
+title: snow-dev.com
 ---
 ![[banner.png]]
 

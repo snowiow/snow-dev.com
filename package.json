@@ -12,7 +12,7 @@
     "url": "https://github.com/jackyzha0/quartz.git"
   },
   "scripts": {
-    "sync": "rsync -av --delete $HOME/Sync/notes/md/digital-garden/ ./content/",
+    "sync": "rsync -av --delete $HOME/Sync/notes/md/public/ ./content/",
     "build": "npx quartz build",
     "quartz": "./quartz/bootstrap-cli.mjs",
     "docs": "npx quartz build --serve -d docs",
