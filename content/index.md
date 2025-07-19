@@ -1,5 +1,6 @@
 ---
 title: snow-dev.com
+date: 2025-07-16
 ---
 ![[banner.png]]
 

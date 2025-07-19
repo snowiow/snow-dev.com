@@ -1,5 +1,5 @@
 ---
-date: 2025-07-16
+date: 2025-07-19
 tags:
   - obsidian
 title: Obsidian as a Read Later App
