@@ -13,6 +13,7 @@
   },
   "scripts": {
     "sync": "rsync -av --delete $HOME/Sync/notes/md/public/ ./content/",
+    "copy-images": "rsync -av --delete ./static/ox-hugo ./content/",
     "build": "npx quartz build",
     "quartz": "./quartz/bootstrap-cli.mjs",
     "docs": "npx quartz build --serve -d docs",

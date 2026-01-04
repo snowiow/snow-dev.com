@@ -56,7 +56,9 @@ export const OxHugoFlavouredMarkdown: QuartzTransformerPlugin<Partial<Options>> 
         src = src.toString()
         src = src.replaceAll(relrefRegex, (_value, ...capture) => {
           const [text, link] = capture
-          return `[${text}](${link})`
+          // Extract just the filename without path for shortest resolution
+          const filename = link.split("/").pop()?.replace(/\.md$/, "") ?? link
+          return `[${text}](${filename})`
         })
       }
 
