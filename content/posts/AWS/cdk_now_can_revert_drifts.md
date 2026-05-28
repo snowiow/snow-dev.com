@@ -1,7 +1,7 @@
 ---
 title: "CDK now can revert drifts"
 date: 2026-05-27T00:00:00+02:00
-lastmod: 2026-05-27T22:26:35+02:00
+lastmod: 2026-05-28T22:55:51+02:00
 draft: false
 ---
 
@@ -103,6 +103,64 @@ arn:aws:cloudformation:eu-central-1:123456789:stack/CdkDriftExampleStack/3fa073f
 ```
 
 This time `cdk deploy` actually made a change. Looking back into the UI or calling `cdk drift` again will show that the visibility timeout is back to 300 seconds / 5 minutes.
+
+
+## Some more shenanigans with reverting drifts {#some-more-shenanigans-with-reverting-drifts}
+
+Before, we had an easy case where we only had a drift, but how does `--revert-drift` handle more complex situations? Let's go through two more examples.
+
+First, we change the field by hand again to 30 minutes, but this time we also update the same attribute in code to 1 minute (60 seconds).
+
+{{< figure src="/ox-hugo/cdk_now_can_revert_drifts_double_change_same_attribute.png" >}}
+
+We get the following from `cdk diff`
+
+```bash
+$ cdk diff
+[~] AWS::SQS::Queue CdkDriftExampleQueue CdkDriftExampleQueueEDCD7478
+ └─ [~] VisibilityTimeout
+     ├─ [-] 300
+     └─ [+] 60
+```
+
+and `cdk drift` respectively
+
+```bash
+$ cdk drift
+[~] AWS::SQS::Queue CdkDriftExampleQueue CdkDriftExampleQueueEDCD7478
+ └─ [~] /VisibilityTimeout
+     ├─ [-] 300
+     └─ [+] 1800
+```
+
+Deploying now with `cdk deploy --revert-drift` will set the _visibilityTimeout_ to 60, which makes sense, because CDK reverts the change back to what we have written in code.
+
+For the second example, we are back at our initial value of 300 seconds for the _visibilityTimeout_, but now we also change a second attribute, the _retentionPeriod_
+
+{{< figure src="/ox-hugo/cdk_now_can_revert_drifts_double_change_different_attribute.png" >}}
+
+Again, diff and drift show two different changes
+
+```bash
+$ cdk diff
+[~] AWS::SQS::Queue CdkDriftExampleQueue CdkDriftExampleQueueEDCD7478
+ └─ [+] MessageRetentionPeriod
+     └─ 100
+```
+
+```bash
+$ cdk drift
+[~] AWS::SQS::Queue CdkDriftExampleQueue CdkDriftExampleQueueEDCD7478
+ └─ [~] /VisibilityTimeout
+     ├─ [-] 300
+     └─ [+] 1800
+```
+
+Looking at the resource in AWS now, we see both attributes got changed at the same time.
+
+{{< figure src="/ox-hugo/cdk_now_can_revert_drifts_double_change_different_attribute_result.png" >}}
+
+The drift and the diff change were applied within the same operation. This means that, while you currently need two commands to see all the changes to your resources — and maybe there will be an additional argument for `cdk diff` at some point — `cdk deploy --revert-drift` handles both types of changes in a single operation. If you intend to use this feature in your deployment pipelines, it's enough to extend your existing `cdk deploy` command with this new flag.
 
 
 ## Where to go from here {#where-to-go-from-here}
