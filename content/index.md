@@ -1,12 +1,12 @@
 ---
 title: "snow-dev.com"
 date: 2026-01-13T00:00:00+01:00
-lastmod: 2026-01-14T22:23:18+01:00
+lastmod: 2026-02-24T21:31:13+01:00
 draft: false
 ---
 
 ![](/ox-hugo/banner.png)
-Hi, my name is Marcel and I'm a Platform Engineer. My current interests are FinOps, [AWS](./posts/AWS), [Emacs](./posts/Emacs), [Obsidian](./posts/Obsidian) and all things [Linux](./posts/Linux). Probably you will find something about these topics here.
+Hi, my name is Marcel and I'm a Platform Engineer. My current interests are FinOps, [AWS](./posts/AWS), [Emacs](./posts/Emacs) ([my config]({{< relref "configs/emacs_configuration.md" >}})), [Obsidian](./posts/Obsidian) and all things [Linux](./posts/Linux). Probably you will find something about these topics here.
 
 I want to experiment with a digital garden instead of a classic blog, because I began to use Obsidian for my private notes and I really like how different notes build interconnections over time. So I was looking for something similar on my public space. I ended up using [Quartz](https://quartz.jzhao.xyz/). I will probably also write in more detail how I exactly set it up at some point and will link it here.
 
