@@ -1,7 +1,7 @@
 ---
 title: "Bring your Emacs to Android"
 date: 2025-12-31T00:00:00+01:00
-lastmod: 2026-01-04T22:57:57+01:00
+lastmod: 2026-07-12T15:38:16+02:00
 draft: false
 ---
 
@@ -34,6 +34,11 @@ If you try to install these apps, you have to allow your browser to open these a
 {{< figure src="/ox-hugo/bring_your_emacs_to_android_play_protect_dialogue.png" >}}
 
 Once you've installed Termux, you can install the correct Emacs apk for your Android version. There is a full list with descriptions at the top of the README, which tells you which apk you should download for your system. For example, I have a Fairphone 6 running on Android 15. Most smartphones nowadays run on ARM64. So the binary I had to download was `emacs-30.2-29-arm64-v8a.apk`. If you run on an Android version which is below 10, you should download `emacs-30.2-21-arm64-v8a.apk` instead. In any case, you should prefer the Emacs version 30.2 over 31.0.50 which is still a development release and can contain bugs. I tried 31.0.50 first and when I opened an org agenda, the agenda view lost focus and everything I did was only printed in the minibuffer. I had to turn off the screen and on again to make Emacs work again. However, this behavior didn't exist in 30.2.
+
+
+### If you use Android 15 {#if-you-use-android-15}
+
+Something I stumbled upon when upgrading to Android 15 is that the Termux apk mentioned above doesn't work anymore, because the signature it's signed with isn't valid for this Android version anymore. I downloaded the apk from [this repository](https://github.com/johanwiden/termux-for-android-emacs) instead.
 
 
 ## Welcome to your Terminal Emulator on a Phone {#welcome-to-your-terminal-emulator-on-a-phone}
@@ -186,6 +191,135 @@ I assigned these two because those are the things I use the most and also want t
 When I want to read up on a note I made, I usually have the time to read it, so I also have the time to type `C-c o r f` and search for my org-roam note.
 
 
+## Improve performance when interacting with org-mode {#improve-performance-when-interacting-with-org-mode}
+
+One downside I discovered over time is that syncing my notes via Syncthing to a normal Android folder outside of the Emacs sandbox comes with some drawbacks:
+
+-   Agenda building is very slow (up to multiple minutes)
+-   Search commands like grep don't find any files in that directory
+
+To get around this, I installed Syncthing into the shared sandbox of Termux and Emacs. This works surprisingly well, similar to running Syncthing via a normal GUI app. Here is how you do it:
+
+First install Syncthing inside of Termux:
+
+```shell
+pkg install syncthing
+```
+
+Then you can run Syncthing by just executing the command in Termux:
+
+```shell
+syncthing
+```
+
+Then your default browser app opens with the familiar web UI, where you can start trusting your other devices and sharing directories. The only problem is that you can't do anything in that Termux session, because it's running in the foreground. Sure, you can also spawn it into the background, but if Android decides to kill your Termux process, you have to reopen Termux and run the command again. It would be better to have it run as a real daemon process in the background and start automatically whenever Termux is opened. On normal Linux distributions you have a daemon runner like systemd. Termux also has one called `termux-services`. You can install it like this:
+
+```shell
+pkg install termux-services
+```
+
+Now comes the slightly more complicated part: We need to define a service file, similar to systemd's service files:
+
+```shell
+SV_DIR="$PREFIX/var/service/syncthing"
+mkdir -p "$SV_DIR/log"
+cat > "$SV_DIR/run" <<EOF
+#!$PREFIX/bin/sh
+exec syncthing --no-browser --gui-address=127.0.0.1:8385 2>&1
+EOF
+chmod +x "$SV_DIR/run"
+ln -sf "$PREFIX/share/termux-services/svlogger" "$SV_DIR/log/run"
+```
+
+First, we create a variable called `SV_DIR` so that we don't have to keep retyping the whole path on a mobile keyboard. The `$PREFIX` variable is a Termux-defined environment variable that points to `/data/data/com.termux/files/usr`. Then we create this directory and a subdirectory, where the logs of this service will be stored. Afterwards, we create the actual service file, which is always called `run` inside the service directory. It simply runs the syncthing binary, bound to a specific GUI address. You might notice that this is not the default address that Syncthing is using, which would be `8384`. I personally had problems binding that address for whatever reason, so I chose the next one instead. Finally, the `--no-browser` flag tells Syncthing to not open the web GUI automatically. Once the file is created, we make it executable and symlink the default logger file into the `log` subdirectory, naming it `run` as well.
+
+Next, we need to make sure that `termux-services` is always running on startup and that Syncthing also starts by default:
+
+```shell
+echo "source $PREFIX/etc/profile.d/start-services.sh" >> "$HOME/.bashrc"
+source "$PREFIX/etc/profile.d/start-services.sh"
+
+sv-enable syncthing
+sv up syncthing
+sv status syncthing
+```
+
+In this snippet, we put the `start-services.sh` shell script into our `~/.bashrc`. This script comes with installing `termux-services`. This ensures that `termux-services` also starts every time Termux does. Then we start it for our current session in the next line. Then we enable syncthing, which is similar to the systemd enable command in that it will start automatically the next time Termux is opened. `sv up` starts it right now for our session. `sv status syncthing` tells us if it's running successfully. If you see an error such as `fail: syncthing: unable to change to service directory ...`, restart Termux and check via `sv status syncthing` again. At least that solved it for me when I had the issue on one of my devices.
+
+Finally, make sure to update the Android notes path in your Emacs config. For me, it now looks like this:
+
+```emacs-lisp
+(defvar snow/android-notes-path "/data/data/com.termux/files/home/Sync/notes")
+```
+
+Afterwards, you shouldn't experience the same slowness as before. Also, you should now see results in your notes directory when doing grep searches.
+
+Since this is quite some effort to set up again and again, I put my whole setup into a semi-idempotent shell script so that I don't need to do everything manually if I need to set up Termux on a new Android phone again. Feel free to copy and modify it to your liking:
+
+```shell
+#!/data/data/com.termux/files/usr/bin/bash
+# Run with:
+#   bash mobile/termux-setup.sh
+
+set -euo pipefail
+
+WORKSPACE_DIR="$HOME/workspace"
+REPO_DIR="$WORKSPACE_DIR/snow"
+EMACS_FILES_DIR="$REPO_DIR/roles/emacs/files"
+SYNCTHING_GUI_ADDRESS="127.0.0.1:8385"
+
+log() { printf '\n\033[1;32m==> %s\033[0m\n' "$1"; }
+
+log "Updating package lists and upgrading installed packages"
+pkg update -y
+pkg upgrade -y
+
+log "Installing required packages"
+pkg install -y git aspell aspell-en aspell-de ripgrep syncthing termux-services
+
+log "Symlinking Emacs config files"
+mkdir -p "$HOME/.emacs.d"
+ln -sf "$EMACS_FILES_DIR/init.el" "$HOME/.emacs.d/init.el"
+ln -sf "$EMACS_FILES_DIR/modeline-dark.el" "$HOME/.emacs.d/modeline-dark.el"
+ln -sf "$EMACS_FILES_DIR/modeline-light.el" "$HOME/.emacs.d/modeline-light.el"
+ln -sf "$EMACS_FILES_DIR/snippets.el" "$HOME/.emacs.d/snippets"
+ln -sf "$EMACS_FILES_DIR/eshell" "$HOME/.emacs.d/eshell"
+
+log "Writing early-init.el to expose Termux binaries to Emacs"
+cat > "$HOME/.emacs.d/early-init.el" <<'EOF'
+(setenv "PATH" (format "%s:%s" "/data/data/com.termux/files/usr/bin"
+                       (getenv "PATH")))
+(push "/data/data/com.termux/files/usr/bin" exec-path)
+EOF
+
+log "Setting up Syncthing as a termux-services runit service"
+SV_DIR="$PREFIX/var/service/syncthing"
+mkdir -p "$SV_DIR/log"
+cat > "$SV_DIR/run" <<EOF
+#!$PREFIX/bin/sh
+exec syncthing --no-browser --gui-address=$SYNCTHING_GUI_ADDRESS 2>&1
+EOF
+chmod +x "$SV_DIR/run"
+ln -sf "$PREFIX/share/termux-services/svlogger" "$SV_DIR/log/run"
+
+log "Ensuring termux-services is sourced on every Termux startup"
+STARTUP_LINE='source $PREFIX/etc/profile.d/start-services.sh'
+if ! grep -qF "$STARTUP_LINE" "$HOME/.bashrc" 2>/dev/null; then
+  echo "$STARTUP_LINE" >> "$HOME/.bashrc"
+fi
+# shellcheck disable=SC1091
+source "$PREFIX/etc/profile.d/start-services.sh"
+
+log "Enabling and starting the syncthing service"
+sv-enable syncthing
+sv up syncthing
+sleep 1
+sv status syncthing
+
+log "Done! Syncthing is now running under $SYNCTHING_GUI_ADDRESS"
+```
+
+
 ## Final Words {#final-words}
 
 First of all, thanks for getting this far. I hope you could take something usable for yourself from this post. Also, a big thanks to Kristoffer Balintona and [his blog post](https://kristofferbalintona.me/posts/202505291438/#necessary-reading-the-manual), which gave me a lot of inspiration and guidance to test Emacs on Android myself.
@@ -195,3 +329,9 @@ For the few use cases I have, the setup feels reliable, but since I'm only getti
 For more information on the topic, also read [the official GNU Emacs Android manual](https://www.gnu.org/software/emacs/manual/html_node/emacs/Android.html). It is especially helpful on the topic of accessing external files.
 
 Finally, if you want to check out my current config, you can find it [here](https://github.com/snowiow/snow/blob/master/roles/emacs/files/init.org).
+
+
+## Later updates {#later-updates}
+
+-   12.07.2026: Added a note to download an alternative apk, because the one on Sourceforge doesn't work on Android 15.
+-   12.07.2026: Added new Syncthing approach by running it in Termux instead of natively.
